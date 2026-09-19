@@ -98,6 +98,8 @@ class UserController extends Controller
 
     public function sendResetLink(User $user)
     {
+        \App\Models\MailSetting::applyConfig();
+
         $status = \Illuminate\Support\Facades\Password::broker()->sendResetLink(['email' => $user->email]);
 
         if ($status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT) {

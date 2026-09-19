@@ -19,12 +19,6 @@ class AppServiceProvider extends ServiceProvider
      */
     public function boot(): void
     {
-        try {
-            if (\Illuminate\Support\Facades\Schema::hasTable('mail_settings')) {
-                \App\Models\MailSetting::applyConfig();
-            }
-        } catch (\Throwable $e) {
-            // Ignore if database is not reachable yet
-        }
+        // Keep boot ultra-fast with zero DB schema checks on page requests
     }
 }

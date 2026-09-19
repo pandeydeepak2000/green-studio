@@ -69,6 +69,21 @@ class FortifyServiceProvider extends ServiceProvider
             };
         });
 
+        // Direct fast login response (no extra intermediate redirect hops)
+        $this->app->singleton(\Laravel\Fortify\Contracts\LoginResponse::class, function () {
+            return new class implements \Laravel\Fortify\Contracts\LoginResponse {
+                public function toResponse($request)
+                {
+                    $user = auth()->user();
+                    $target = ($user && $user->role === 'admin')
+                        ? route('admin.dashboard')
+                        : route('staff.dashboard');
+
+                    return redirect()->intended($target);
+                }
+            };
+        });
+
         // Custom authentication
         Fortify::authenticateUsing(function (Request $request) {
             $credentials = $request->only('email', 'password');
