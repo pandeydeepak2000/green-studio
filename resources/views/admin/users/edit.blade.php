@@ -257,6 +257,13 @@
                             class="form-select"
                             required>
 
+                        <option value="support"
+                            {{ old('role', $user->role) === 'support' ? 'selected' : '' }}>
+
+                            Support (Staff)
+
+                        </option>
+
                         <option value="staff"
                             {{ old('role', $user->role) === 'staff' ? 'selected' : '' }}>
 

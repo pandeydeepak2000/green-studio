@@ -54,14 +54,41 @@ class FortifyServiceProvider extends ServiceProvider
         Fortify::resetUserPasswordsUsing(ResetUserPassword::class);
         Fortify::redirectUserForTwoFactorAuthenticationUsing(RedirectIfTwoFactorAuthenticatable::class);
 
+        // Custom registration response - require admin approval
+        $this->app->singleton(\Laravel\Fortify\Contracts\RegisterResponse::class, function () {
+            return new class implements \Laravel\Fortify\Contracts\RegisterResponse {
+                public function toResponse($request)
+                {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+
+                    return redirect()->route('login')
+                        ->with('status', 'Account created successfully! However, your account is awaiting Admin approval before you can access the dashboard.');
+                }
+            };
+        });
+
         // Custom authentication
         Fortify::authenticateUsing(function (Request $request) {
             $credentials = $request->only('email', 'password');
 
             if (Auth::attempt($credentials, $request->boolean('remember'))) {
+                $user = Auth::user();
+
+                if ($user->role !== 'admin' && ! $user->is_approved) {
+                    Auth::logout();
+                    $request->session()->invalidate();
+                    $request->session()->regenerateToken();
+
+                    throw \Illuminate\Validation\ValidationException::withMessages([
+                        'email' => ['Your account has been registered, but it is awaiting Admin approval. You cannot log in until an administrator approves your account.'],
+                    ]);
+                }
+
                 $request->session()->regenerate();
 
-                return Auth::user();
+                return $user;
             }
 
             return null;

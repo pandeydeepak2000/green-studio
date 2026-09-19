@@ -191,7 +191,7 @@
 @endif
 
 {{-- HEADER --}}
-<div class="page-header">
+<div class="page-header d-flex justify-content-between align-items-center flex-wrap gap-3">
 
     <div>
 
@@ -203,10 +203,17 @@
 
         <div class="page-subtitle">
 
-            All invoices created by staff and admin
+            All invoices created by Green Studio staff and admin
 
         </div>
 
+    </div>
+
+    <div>
+        <a href="{{ route('staff.invoices.create') }}" class="btn btn-primary action-btn d-inline-flex align-items-center gap-2">
+            <span>➕</span>
+            <span>Create New Invoice</span>
+        </a>
     </div>
 
 </div>
@@ -506,12 +513,25 @@
                             {{-- ACTIONS --}}
                             <td class="text-end">
 
-                                <a href="{{ route('admin.invoices.show', $invoice) }}"
-                                   class="btn btn-outline-dark action-btn">
+                                <div class="d-inline-flex gap-1">
 
-                                    View
+                                    <a href="{{ route('staff.invoices.show', $invoice) }}"
+                                       class="btn btn-sm btn-outline-dark action-btn"
+                                       title="View & Print Invoice">
 
-                                </a>
+                                        🖨️ View / Print
+
+                                    </a>
+
+                                    <a href="{{ route('staff.invoices.edit', $invoice) }}"
+                                       class="btn btn-sm btn-primary action-btn"
+                                       title="Edit Invoice Items & Status">
+
+                                        ✏️ Edit
+
+                                    </a>
+
+                                </div>
 
                             </td>
 

@@ -7,6 +7,7 @@ use App\Models\Customer;
 use App\Models\Invoice;
 use App\Models\InvoiceTransaction;
 use App\Models\ActivityLog;
+use App\Models\Company;
 use Illuminate\Http\Request;
 use Illuminate\Support\Carbon;
 
@@ -132,7 +133,7 @@ class InvoiceController extends Controller
     {
         $user = auth()->user();
 
-        $company = $user->company;
+        $company = $user->company ?? Company::where('is_default', true)->first() ?? Company::first();
 
         if (!$company) {
 
@@ -140,7 +141,7 @@ class InvoiceController extends Controller
                 ->route('staff.dashboard')
                 ->with(
                     'status',
-                    'No company assigned to your account. Please contact admin.'
+                    'No company found. Please add Green Studio company in admin panel.'
                 );
 
         }
@@ -188,13 +189,13 @@ class InvoiceController extends Controller
 
     public function store(Request $request)
     {
-        $company = auth()->user()->company;
+        $company = auth()->user()->company ?? Company::where('is_default', true)->first() ?? Company::first();
 
         if (!$company) {
 
             abort(
                 403,
-                'No company assigned to your account.'
+                'No company assigned or configured.'
             );
 
         }
@@ -242,6 +243,7 @@ class InvoiceController extends Controller
             'invoice_date'   => $data['invoice_date'],
             'company_id'     => $company->id,
             'customer_id'    => $customer->id,
+            'created_by'     => auth()->id(),
             'sale_type'      => $saleType,
             'taxable_amount' => 0,
             'cgst_amount'    => 0,
@@ -256,6 +258,9 @@ class InvoiceController extends Controller
         ActivityLog::create([
 
             'user_id'     => auth()->id(),
+            'user_name'   => auth()->user()->name ?? 'User',
+            'user_email'  => auth()->user()->email ?? '',
+            'role'        => auth()->user()->role ?? '',
             'action'      => 'create',
             'module'      => 'invoice',
             'module_id'   => $invoice->id,
@@ -280,9 +285,11 @@ class InvoiceController extends Controller
             'transactions'
         );
 
+        $customers = Customer::orderBy('name')->get();
+
         return view(
             'staff.invoices.edit',
-            compact('invoice')
+            compact('invoice', 'customers')
         );
     }
 
@@ -422,6 +429,9 @@ class InvoiceController extends Controller
         ActivityLog::create([
 
             'user_id'     => auth()->id(),
+            'user_name'   => auth()->user()->name ?? 'User',
+            'user_email'  => auth()->user()->email ?? '',
+            'role'        => auth()->user()->role ?? '',
             'action'      => 'update',
             'module'      => 'invoice',
             'module_id'   => $invoice->id,
@@ -442,41 +452,30 @@ class InvoiceController extends Controller
         Invoice $invoice
     ) {
         $data = $request->validate([
-
             'status' => [
                 'required',
                 'in:unpaid,paid'
             ],
-
+            'payment_method' => [
+                'nullable',
+                'string',
+                'max:100'
+            ],
             'transaction_id' => [
                 'nullable',
                 'string',
-                'max:191'
+                'max:191',
+                function ($attribute, $value, $fail) use ($request) {
+                    if ($request->status === 'paid' && (empty($value) || strlen(trim($value)) < 3)) {
+                        $fail('Transaction ID is strictly mandatory when marking an invoice as PAID.');
+                    }
+                },
             ],
-
             'invoice_date' => [
                 'nullable',
                 'date'
             ],
-
         ]);
-
-        // paid validation
-        if (
-            $data['status'] === 'paid'
-            && empty($data['transaction_id'])
-        ) {
-
-            return back()
-                ->withErrors([
-
-                    'transaction_id' =>
-                    'Transaction ID is required when marking as PAID.'
-
-                ])
-                ->withInput();
-
-        }
 
         $invoice->status = $data['status'];
 
@@ -490,9 +489,11 @@ class InvoiceController extends Controller
 
         if ($data['status'] === 'paid') {
 
+            $method = !empty($data['payment_method']) ? $data['payment_method'] : 'UPI / Digital Payment';
+
             $invoice->transactions()->create([
 
-                'gateway'        => 'manual',
+                'gateway'        => $method,
 
                 'transaction_id' =>
                     $data['transaction_id'],
@@ -507,6 +508,9 @@ class InvoiceController extends Controller
             ActivityLog::create([
 
                 'user_id'     => auth()->id(),
+                'user_name'   => auth()->user()->name ?? 'User',
+                'user_email'  => auth()->user()->email ?? '',
+                'role'        => auth()->user()->role ?? '',
                 'action'      => 'payment',
                 'module'      => 'invoice',
                 'module_id'   => $invoice->id,
@@ -521,5 +525,92 @@ class InvoiceController extends Controller
                 'status',
                 'Invoice updated.'
             );
+    }
+
+    public function updateBasic(Request $request, Invoice $invoice)
+    {
+        $data = $request->validate([
+            'invoice_number' => ['required', 'string', 'max:100', "unique:invoices,invoice_number,{$invoice->id}"],
+            'customer_id'    => ['required', 'exists:customers,id'],
+            'invoice_date'   => ['required', 'date'],
+        ]);
+
+        $customer = Customer::findOrFail($data['customer_id']);
+        $company = $invoice->company ?? auth()->user()->company ?? Company::where('is_default', true)->first();
+
+        $saleType = null;
+        if ($company && $company->state && $customer->state) {
+            $saleType = ($company->state === $customer->state) ? 'LOCAL' : 'CENTRAL';
+        }
+
+        $invoice->update([
+            'invoice_number' => $data['invoice_number'],
+            'customer_id'    => $customer->id,
+            'invoice_date'   => $data['invoice_date'],
+            'sale_type'      => $saleType,
+        ]);
+
+        // Re-calculate tax breakdown if sale type changed
+        $taxableTotal = 0;
+        $cgstTotal = 0;
+        $sgstTotal = 0;
+        $igstTotal = 0;
+        $grandTotal = 0;
+
+        foreach ($invoice->items as $item) {
+            $lineTaxable = $item->rate;
+            $taxRate = $item->gst_percent;
+            $gstAmount = $lineTaxable * ($taxRate / 100);
+
+            $cgst = 0;
+            $sgst = 0;
+            $igst = 0;
+
+            if ($invoice->sale_type === 'LOCAL') {
+                $cgst = $gstAmount / 2;
+                $sgst = $gstAmount / 2;
+            } elseif ($invoice->sale_type === 'CENTRAL') {
+                $igst = $gstAmount;
+            }
+
+            $lineTotal = $lineTaxable + $gstAmount;
+
+            $item->update([
+                'taxable'     => $lineTaxable,
+                'cgst_amount' => $cgst,
+                'sgst_amount' => $sgst,
+                'igst_amount' => $igst,
+                'line_total'  => $lineTotal,
+            ]);
+
+            $taxableTotal += $lineTaxable;
+            $cgstTotal += $cgst;
+            $sgstTotal += $sgst;
+            $igstTotal += $igst;
+            $grandTotal += $lineTotal;
+        }
+
+        $invoice->update([
+            'taxable_amount' => $taxableTotal,
+            'cgst_amount'    => $cgstTotal,
+            'sgst_amount'    => $sgstTotal,
+            'igst_amount'    => $igstTotal,
+            'total_amount'   => $grandTotal,
+        ]);
+
+        ActivityLog::create([
+            'user_id'     => auth()->id(),
+            'user_name'   => auth()->user()->name ?? 'User',
+            'user_email'  => auth()->user()->email ?? '',
+            'role'        => auth()->user()->role ?? '',
+            'action'      => 'update',
+            'module'      => 'invoice',
+            'module_id'   => $invoice->id,
+            'description' => 'Updated invoice details #' . $invoice->invoice_number,
+        ]);
+
+        return redirect()
+            ->route('staff.invoices.edit', $invoice)
+            ->with('status', 'Invoice basic details updated successfully.');
     }
 }

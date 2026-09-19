@@ -261,25 +261,21 @@
 
         <div class="auth-badge">
 
-            ⚡ Smart GST Billing Platform
+            🌿 Green Studio • Official Portal
 
         </div>
 
         <div class="auth-main-title">
 
-            GST Invoice
-            Management
-            System
+            GREEN STUDIO
+            GST Invoicing System
 
         </div>
 
         <div class="auth-main-subtitle">
 
-            Create professional GST invoices,
-            manage customers, track payments,
-            generate reports and run your
-            complete billing business from one
-            modern dashboard.
+            Manage GST invoices, clients, automatic tax calculations (CGST, SGST & IGST),
+            and download government-compliant invoices for Green Studio (Khagaria, Bihar).
 
         </div>
 
@@ -293,8 +289,8 @@
 
                 <div class="feature-text">
 
-                    Professional invoice creation with
-                    automatic GST calculations.
+                    <strong>GREEN STUDIO</strong><br>
+                    GSTIN: 10DYFPA2189J1ZO (Regular Registration)
 
                 </div>
 
@@ -303,13 +299,12 @@
             <div class="feature-item">
 
                 <div class="feature-icon">
-                    📊
+                    🏢
                 </div>
 
                 <div class="feature-text">
 
-                    Sales reports, GST reports and
-                    payment tracking dashboard.
+                    Koshi College, Kachhari Road, Chitragupt Nagar, Khagaria, Bihar - 851205
 
                 </div>
 
@@ -323,8 +318,7 @@
 
                 <div class="feature-text">
 
-                    Secure admin and staff login
-                    system with role management.
+                    Role-Based Access: Admin Security & Support Team Invoicing
 
                 </div>
 
@@ -341,20 +335,19 @@
 
             <div class="brand-title">
 
-                GST Invoice Panel
+                Green Studio
 
             </div>
 
             <div class="brand-subtitle">
 
-                Smart GST billing, invoice generation,
-                customer management & sales tracking system.
+                GST Billing, Invoices & Customer Management
 
             </div>
 
             <div class="brand-mini">
 
-                Ambition Management • Billing System
+                GSTIN: 10DYFPA2189J1ZO • Khagaria, Bihar
 
             </div>
 

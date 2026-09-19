@@ -68,14 +68,13 @@
 
     <div class="auth-title">
 
-        Create Admin Account 🚀
+        Create Account 🚀
 
     </div>
 
     <div class="auth-subtitle">
 
-        Create your GST Invoice admin account to manage
-        invoices, customers, GST reports and billing operations.
+        Register for Green Studio Invoicing Portal. Once created, your account will be activated upon Admin approval.
 
     </div>
 

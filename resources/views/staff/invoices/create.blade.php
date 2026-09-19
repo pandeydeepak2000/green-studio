@@ -1,4 +1,4 @@
-@extends('layouts.staff')
+@extends(auth()->check() && auth()->user()->role === 'admin' ? 'layouts.admin' : 'layouts.staff')
 
 @section('title', 'New Invoice')
 @section('page_title', 'Create Invoice')
@@ -214,6 +214,18 @@
 
                 </div>
 
+                {{-- COMPANY BANNER --}}
+                <div class="p-3 mb-4 rounded-4 bg-light border d-flex align-items-center justify-content-between flex-wrap gap-2">
+                    <div>
+                        <span class="badge bg-success text-white me-2">Billing As</span>
+                        <strong class="text-dark">{{ $company->name }}</strong>
+                        <span class="text-muted ms-2 small">GSTIN: <strong>{{ $company->gstin ?? 'N/A' }}</strong> | State: {{ $company->state ?? 'Bihar' }}</span>
+                    </div>
+                    <div class="small text-muted">
+                        📍 {{ $company->address }}
+                    </div>
+                </div>
+
                 {{-- FORM --}}
                 <form method="POST"
                       action="{{ route('staff.invoices.store') }}">
@@ -225,17 +237,20 @@
                         {{-- INVOICE NUMBER --}}
                         <div class="col-md-4">
 
-                            <label class="form-label">
-
-                                Invoice Number *
-
+                            <label class="form-label d-flex justify-content-between">
+                                <span>Invoice Number *</span>
+                                <span class="small text-muted">Auto-suggested</span>
                             </label>
+
+                            @php
+                                $suggestedInv = 'GS-' . date('Y') . '-' . str_pad((\App\Models\Invoice::max('id') + 1), 4, '0', STR_PAD_LEFT);
+                            @endphp
 
                             <input type="text"
                                    name="invoice_number"
-                                   class="form-control @error('invoice_number') is-invalid @enderror"
-                                   value="{{ old('invoice_number') }}"
-                                   placeholder="Enter invoice number"
+                                   class="form-control @error('invoice_number') is-invalid @enderror fw-semibold"
+                                   value="{{ old('invoice_number', $suggestedInv) }}"
+                                   placeholder="e.g. GS-2026-0001"
                                    required>
 
                             @error('invoice_number')

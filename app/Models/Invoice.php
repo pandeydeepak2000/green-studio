@@ -11,6 +11,7 @@ class Invoice extends Model
         'invoice_date',
         'company_id',
         'customer_id',
+        'created_by',
         'sale_type',
         'taxable_amount',
         'cgst_amount',

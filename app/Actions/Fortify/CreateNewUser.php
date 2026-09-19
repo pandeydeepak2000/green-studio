@@ -35,10 +35,12 @@ class CreateNewUser implements CreatesNewUsers
         ])->validate();
 
         return User::create([
-            'name' => $input['name'],
-            'email' => $input['email'],
-            'password' => Hash::make($input['password']),
-            'role' => 'staff', // every new registered user will be staff
+            'name'        => $input['name'],
+            'email'       => $input['email'],
+            'password'    => Hash::make($input['password']),
+            'role'        => 'support',
+            'is_approved' => false,
+            'company_id'  => \App\Models\Company::where('is_default', true)->value('id') ?? \App\Models\Company::first()?->id,
         ]);
     }
 }

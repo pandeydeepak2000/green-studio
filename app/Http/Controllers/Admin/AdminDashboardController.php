@@ -44,9 +44,9 @@ class AdminDashboardController extends Controller
 
         $totalCustomers = Customer::count();
 
-        $totalStaff = User::where(
+        $totalStaff = User::whereIn(
             'role',
-            'staff'
+            ['staff', 'support']
         )->count();
 
         $recentActivities = ActivityLog::with('user')

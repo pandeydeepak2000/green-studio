@@ -303,8 +303,9 @@
      id="sidebar">
 
     {{-- BRAND --}}
-    <div class="brand">
-        GST Invoice
+    <div class="brand d-flex align-items-center gap-2">
+        <span style="color:#22c55e;">🌿</span>
+        <span>Green Studio</span>
     </div>
 
     {{-- USER --}}
@@ -315,7 +316,7 @@
         </div>
 
         <div class="user-role">
-            {{ auth()->user()->role ?? '' }}
+            👑 {{ strtoupper(auth()->user()->role ?? '') }}
         </div>
 
     </div>
@@ -333,8 +334,17 @@
 
     </a>
 
+    <a href="{{ route('staff.invoices.create') }}"
+       class="nav-link @if(request()->routeIs('staff.invoices.create')) active @endif"
+       style="background:rgba(34,197,94,0.12); color:#4ade80; border:1px dashed rgba(34,197,94,0.3);">
+
+        <span>➕</span>
+        <span>Create Invoice</span>
+
+    </a>
+
     <a href="{{ route('customers.index') }}"
-       class="nav-link @if(request()->routeIs('customers.*')) active @endif">
+       class="nav-link @if(request()->routeIs('customers.*') || request()->routeIs('staff.customers.*')) active @endif">
 
         <span>👥</span>
         <span>Customers</span>
@@ -342,7 +352,7 @@
     </a>
 
     <a href="{{ route('admin.invoices.index') }}"
-       class="nav-link @if(request()->routeIs('admin.invoices.*')) active @endif">
+       class="nav-link @if(request()->routeIs('admin.invoices.*') || (request()->routeIs('staff.invoices.*') && !request()->routeIs('staff.invoices.create'))) active @endif">
 
         <span>🧾</span>
         <span>Invoices</span>
@@ -427,6 +437,10 @@
         </div>
 
         <div class="topbar-right">
+
+            <a href="{{ route('staff.invoices.create') }}" class="btn btn-sm btn-primary rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-1 shadow-sm">
+                <span>➕</span> <span>New Invoice</span>
+            </a>
 
             <div class="admin-badge">
                 ADMIN PANEL

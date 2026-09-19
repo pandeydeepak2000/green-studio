@@ -288,8 +288,9 @@
 <div class="sidebar"
      id="sidebar">
 
-    <div class="brand">
-        GST Invoice
+    <div class="brand d-flex align-items-center gap-2">
+        <span style="color:#22c55e;">🌿</span>
+        <span>Green Studio</span>
     </div>
 
     {{-- USER --}}
@@ -300,7 +301,7 @@
         </div>
 
         <div class="user-role">
-            {{ auth()->user()->role ?? '' }}
+            🛡️ {{ strtoupper(auth()->user()->role ?? 'Support') }} TEAM
         </div>
 
     </div>
@@ -316,6 +317,15 @@
 
         </a>
 
+        <a href="{{ route('staff.invoices.create') }}"
+           class="nav-link @if(request()->routeIs('staff.invoices.create')) active @endif"
+           style="background:rgba(34,197,94,0.12); color:#4ade80; border:1px dashed rgba(34,197,94,0.3);">
+
+            <span>➕</span>
+            <span>Create Invoice</span>
+
+        </a>
+
         <a href="{{ route('staff.customers.index') }}"
            class="nav-link @if(request()->routeIs('staff.customers.*')) active @endif">
 
@@ -325,12 +335,43 @@
         </a>
 
         <a href="{{ route('staff.invoices.index') }}"
-           class="nav-link @if(request()->routeIs('staff.invoices.*')) active @endif">
+           class="nav-link @if(request()->routeIs('staff.invoices.*') && !request()->routeIs('staff.invoices.create')) active @endif">
 
             <span>🧾</span>
             <span>Invoices</span>
 
         </a>
+
+        @if(auth()->check() && auth()->user()->role === 'admin')
+            <div class="nav-section-title text-uppercase mt-4 mb-2" style="font-size:11px; letter-spacing:0.08em; color:#64748b; font-weight:700;">
+                Admin Controls
+            </div>
+
+            <a href="{{ route('admin.dashboard') }}" class="nav-link @if(request()->routeIs('admin.dashboard')) active @endif">
+                <span>⚙️</span>
+                <span>Admin Dashboard</span>
+            </a>
+
+            <a href="{{ route('admin.gstReports.index') }}" class="nav-link @if(request()->routeIs('admin.gstReports.*')) active @endif">
+                <span>📊</span>
+                <span>GST Reports</span>
+            </a>
+
+            <a href="{{ route('admin.users.index') }}" class="nav-link @if(request()->routeIs('admin.users.*')) active @endif">
+                <span>👨‍💼</span>
+                <span>Users</span>
+            </a>
+
+            <a href="{{ route('companies.index') }}" class="nav-link @if(request()->routeIs('companies.*')) active @endif">
+                <span>🏢</span>
+                <span>Companies</span>
+            </a>
+
+            <a href="{{ route('admin.activityLogs.index') }}" class="nav-link @if(request()->routeIs('admin.activityLogs.*')) active @endif">
+                <span>📜</span>
+                <span>Activity Logs</span>
+            </a>
+        @endif
 
     </div>
 
@@ -374,9 +415,17 @@
 
         </div>
 
-        <div class="small text-muted fw-semibold d-none d-md-block">
+        <div class="d-flex align-items-center gap-3">
 
-            {{ now()->format('d M Y') }}
+            <a href="{{ route('staff.invoices.create') }}" class="btn btn-sm btn-primary rounded-pill px-3 py-2 fw-bold d-flex align-items-center gap-1 shadow-sm">
+                <span>➕</span> <span>New Invoice</span>
+            </a>
+
+            <div class="small text-muted fw-semibold d-none d-md-block">
+
+                {{ now()->format('d M Y') }}
+
+            </div>
 
         </div>
 

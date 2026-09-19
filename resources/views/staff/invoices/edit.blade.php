@@ -1,4 +1,4 @@
-@extends('layouts.staff')
+@extends(auth()->check() && auth()->user()->role === 'admin' ? 'layouts.admin' : 'layouts.staff')
 
 @section('title', 'Edit Invoice #' . $invoice->invoice_number)
 @section('page_title', 'Edit Invoice')
@@ -171,6 +171,7 @@ textarea.form-control{
     <div class="invoice-edit-wrapper">
 
         {{-- HEADER --}}
+        {{-- HEADER --}}
         <div class="page-header">
 
             <div>
@@ -183,18 +184,30 @@ textarea.form-control{
 
                 <div class="page-subtitle">
 
-                    Invoice #{{ $invoice->invoice_number }}
+                    Invoice #{{ $invoice->invoice_number }} &bull; Customer: {{ $invoice->customer->company_name ?? $invoice->customer->name }}
 
                 </div>
 
             </div>
 
-            <a href="{{ route('staff.invoices.index') }}"
-               class="btn btn-light">
+            <div class="d-flex gap-2">
 
-                Back
+                <a href="{{ route('staff.invoices.show', $invoice) }}"
+                   class="btn btn-outline-dark d-flex align-items-center gap-1">
 
-            </a>
+                    <span>🖨️</span>
+                    <span>View & Print</span>
+
+                </a>
+
+                <a href="{{ auth()->check() && auth()->user()->role === 'admin' ? route('admin.invoices.index') : route('staff.invoices.index') }}"
+                   class="btn btn-light border">
+
+                    Back
+
+                </a>
+
+            </div>
 
         </div>
 
@@ -208,9 +221,88 @@ textarea.form-control{
 
         @endif
 
+        {{-- BASIC DETAILS CARD --}}
+        <form action="{{ route('staff.invoices.updateBasic', $invoice) }}"
+              method="POST"
+              class="mb-4">
+
+            @csrf
+            @method('PUT')
+
+            <div class="card invoice-card mb-4 border shadow-sm">
+
+                <div class="card-body">
+
+                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-2 mb-3">
+                        <h6 class="fw-bold mb-0 text-dark">
+                            📋 Basic Invoice Information
+                        </h6>
+                        <div>
+                            @if($invoice->sale_type === 'LOCAL')
+                                <span class="badge bg-success-subtle text-success border border-success-subtle px-3 py-2">
+                                    Local Sale (Bihar &bull; CGST + SGST)
+                                </span>
+                            @elseif($invoice->sale_type === 'CENTRAL')
+                                <span class="badge bg-primary-subtle text-primary border border-primary-subtle px-3 py-2">
+                                    Interstate Sale (Central &bull; IGST)
+                                </span>
+                            @endif
+                        </div>
+                    </div>
+
+                    <div class="row g-3">
+
+                        {{-- INVOICE NUMBER --}}
+                        <div class="col-md-4">
+                            <label class="form-label">Invoice Number *</label>
+                            <input type="text"
+                                   name="invoice_number"
+                                   class="form-control fw-semibold"
+                                   value="{{ old('invoice_number', $invoice->invoice_number) }}"
+                                   required>
+                        </div>
+
+                        {{-- CUSTOMER --}}
+                        <div class="col-md-4">
+                            <label class="form-label">Customer *</label>
+                            <select name="customer_id" class="form-select fw-semibold" required>
+                                @foreach($customers as $cust)
+                                    <option value="{{ $cust->id }}" {{ old('customer_id', $invoice->customer_id) == $cust->id ? 'selected' : '' }}>
+                                        {{ $cust->company_name ? $cust->company_name . ' (' . $cust->name . ')' : $cust->name }} - {{ $cust->state ?? 'Bihar' }}
+                                    </option>
+                                @endforeach
+                            </select>
+                        </div>
+
+                        {{-- INVOICE DATE --}}
+                        <div class="col-md-2">
+                            <label class="form-label">Invoice Date *</label>
+                            <input type="date"
+                                   name="invoice_date"
+                                   class="form-control"
+                                   value="{{ old('invoice_date', optional($invoice->invoice_date)->format('Y-m-d')) }}"
+                                   required>
+                        </div>
+
+                        {{-- SAVE BUTTON --}}
+                        <div class="col-md-2 d-flex align-items-end">
+                            <button type="submit" class="btn btn-outline-primary w-100 fw-bold">
+                                Update Info
+                            </button>
+                        </div>
+
+                    </div>
+
+                </div>
+
+            </div>
+
+        </form>
+
         {{-- STATUS --}}
         <form action="{{ route('staff.invoices.updateStatusWithTransaction', $invoice) }}"
               method="POST"
+              id="paymentStatusForm"
               class="mb-4">
 
             @csrf
@@ -220,19 +312,21 @@ textarea.form-control{
 
                 <div class="card-body">
 
-                    <div class="row g-4">
+                    <div class="row g-3">
 
                         {{-- STATUS --}}
                         <div class="col-md-3">
 
-                            <label class="form-label">
+                            <label class="form-label fw-bold">
 
                                 Payment Status
 
                             </label>
 
                             <select name="status"
-                                    class="form-select">
+                                    id="paymentStatusSelect"
+                                    class="form-select"
+                                    onchange="toggleTxRequirement()">
 
                                 <option value="unpaid"
                                     {{ $invoice->status === 'unpaid' ? 'selected' : '' }}>
@@ -252,20 +346,45 @@ textarea.form-control{
 
                         </div>
 
+                        {{-- PAYMENT METHOD --}}
+                        <div class="col-md-3">
+
+                            <label class="form-label fw-bold">
+
+                                Payment Method
+
+                            </label>
+
+                            @php
+                                $currentMethod = $invoice->transactions->first()?->gateway ?? 'UPI / Digital Payment';
+                            @endphp
+
+                            <select name="payment_method" class="form-select">
+                                <option value="UPI / Digital Payment" {{ $currentMethod === 'UPI / Digital Payment' ? 'selected' : '' }}>💳 UPI / Digital Payment</option>
+                                <option value="Bank Transfer (NEFT/IMPS)" {{ str_contains($currentMethod, 'Bank') ? 'selected' : '' }}>🏦 Bank Transfer (NEFT/IMPS)</option>
+                                <option value="Card / POS" {{ str_contains($currentMethod, 'Card') ? 'selected' : '' }}>💳 Card / POS</option>
+                                <option value="Cash Payment" {{ str_contains($currentMethod, 'Cash') ? 'selected' : '' }}>💵 Cash Payment</option>
+                                <option value="Cheque / DD" {{ str_contains($currentMethod, 'Cheque') ? 'selected' : '' }}>📝 Cheque / DD</option>
+                            </select>
+
+                        </div>
+
                         {{-- TRANSACTION --}}
-                        <div class="col-md-4">
+                        <div class="col-md-3">
 
-                            <label class="form-label">
+                            <label class="form-label fw-bold">
 
-                                Transaction ID
+                                Transaction Ref / ID
+                                <span id="txRequiredStar" class="text-danger small" style="display: {{ $invoice->status === 'paid' ? 'inline' : 'none' }};">* (Required for PAID)</span>
 
                             </label>
 
                             <input type="text"
+                                   id="transactionIdInput"
                                    name="transaction_id"
                                    class="form-control @error('transaction_id') is-invalid @enderror"
-                                   placeholder="Enter transaction ID"
-                                   value="{{ old('transaction_id') }}">
+                                   placeholder="e.g. UPI/Bank Ref"
+                                   value="{{ old('transaction_id', $invoice->transactions->first()?->transaction_id ?? '') }}">
 
                             @error('transaction_id')
 
@@ -280,7 +399,7 @@ textarea.form-control{
                         {{-- DATE --}}
                         <div class="col-md-3">
 
-                            <label class="form-label">
+                            <label class="form-label fw-bold">
 
                                 Invoice Date
 
@@ -293,13 +412,13 @@ textarea.form-control{
 
                         </div>
 
-                        {{-- SAVE --}}
-                        <div class="col-md-2 d-flex align-items-end">
+                        {{-- SAVE BUTTON --}}
+                        <div class="col-12 text-end pt-2">
 
                             <button type="submit"
-                                    class="btn btn-primary w-100">
+                                    class="btn btn-primary px-4 py-2 fw-semibold">
 
-                                Save
+                                Update Payment & Status
 
                             </button>
 
@@ -705,6 +824,40 @@ document.addEventListener('DOMContentLoaded', function () {
 
 });
 
+function toggleTxRequirement() {
+    const statusSelect = document.getElementById('paymentStatusSelect');
+    const txInput = document.getElementById('transactionIdInput');
+    const star = document.getElementById('txRequiredStar');
+    if (statusSelect && txInput && star) {
+        if (statusSelect.value === 'paid') {
+            star.style.display = 'inline';
+            txInput.setAttribute('required', 'required');
+        } else {
+            star.style.display = 'none';
+            txInput.removeAttribute('required');
+        }
+    }
+}
+
+document.addEventListener('DOMContentLoaded', function() {
+    toggleTxRequirement();
+
+    const paymentForm = document.getElementById('paymentStatusForm');
+    if (paymentForm) {
+        paymentForm.addEventListener('submit', function(e) {
+            const statusSelect = document.getElementById('paymentStatusSelect');
+            const txInput = document.getElementById('transactionIdInput');
+            if (statusSelect && statusSelect.value === 'paid') {
+                if (!txInput || !txInput.value.trim()) {
+                    e.preventDefault();
+                    alert('Security Check: An invoice CANNOT be marked as PAID without entering a valid Transaction ID.');
+                    txInput.focus();
+                    return false;
+                }
+            }
+        });
+    }
+});
 </script>
 
 @endsection

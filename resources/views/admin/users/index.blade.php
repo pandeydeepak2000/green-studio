@@ -188,6 +188,7 @@
                         <th>User</th>
                         <th>Role</th>
                         <th>Company</th>
+                        <th>Approval</th>
                         <th class="text-end">Actions</th>
 
                     </tr>
@@ -264,9 +265,49 @@
 
                             </td>
 
+                            <td>
+
+                                @if($user->is_approved || $user->role === 'admin')
+
+                                    <span class="badge bg-success-subtle text-success border border-success-subtle px-2 py-1 rounded-pill">
+                                        ✓ Approved
+                                    </span>
+
+                                @else
+
+                                    <div class="d-flex align-items-center gap-1">
+                                        <span class="badge bg-warning-subtle text-warning-emphasis border border-warning-subtle px-2 py-1 rounded-pill">
+                                            ⏳ Pending
+                                        </span>
+
+                                        <form action="{{ route('admin.users.approve', $user) }}"
+                                              method="POST"
+                                              onsubmit="return confirm('Approve user {{ $user->name }}?')">
+                                            @csrf
+                                            <button type="submit" class="btn btn-sm btn-success rounded-pill px-2 py-0" style="font-size: 11px;">
+                                                Approve
+                                            </button>
+                                        </form>
+                                    </div>
+
+                                @endif
+
+                            </td>
+
                             <td class="text-end">
 
-                                <div class="d-flex justify-content-end gap-2">
+                                <div class="d-flex justify-content-end gap-2 flex-wrap">
+
+                                    <form action="{{ route('admin.users.sendResetLink', $user) }}"
+                                          method="POST"
+                                          onsubmit="return confirm('Send password reset email to {{ $user->email }}?')">
+                                        @csrf
+                                        <button type="submit"
+                                                class="btn btn-outline-secondary action-btn"
+                                                title="Send password reset link to user email">
+                                            ✉️ Reset Pass
+                                        </button>
+                                    </form>
 
                                     <a href="{{ route('admin.users.edit', $user) }}"
                                        class="btn btn-outline-primary action-btn">
@@ -301,7 +342,7 @@
 
                         <tr>
 
-                            <td colspan="5">
+                            <td colspan="6">
 
                                 <div class="empty-box">
 

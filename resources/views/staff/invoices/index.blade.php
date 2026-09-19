@@ -1,4 +1,4 @@
-@extends('layouts.staff')
+@extends(auth()->check() && auth()->user()->role === 'admin' ? 'layouts.admin' : 'layouts.staff')
 
 @section('title', 'Invoices')
 @section('page_title', 'Invoices')
@@ -547,19 +547,21 @@
                             {{-- ACTIONS --}}
                             <td class="text-end">
 
-                                <div class="action-group">
+                                <div class="action-group d-inline-flex gap-1">
 
                                     <a href="{{ route('staff.invoices.show', $invoice) }}"
-                                       class="btn btn-outline-dark">
+                                       class="btn btn-outline-dark"
+                                       title="View and Print Invoice">
 
-                                        View
+                                        🖨️ View / Print
 
                                     </a>
 
                                     <a href="{{ route('staff.invoices.edit', $invoice) }}"
-                                       class="btn btn-primary">
+                                       class="btn btn-primary"
+                                       title="Edit Invoice">
 
-                                        Edit
+                                        ✏️ Edit
 
                                     </a>
 

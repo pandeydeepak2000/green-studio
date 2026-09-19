@@ -1,6 +1,6 @@
 @extends('layouts.auth')
 
-@section('title', 'Sign in - GST Invoice')
+@section('title', 'Reset Password - GST Invoice')
 
 @section('content')
 
@@ -47,6 +47,11 @@
     font-size:15px;
 }
 
+.auth-alert{
+    border:none;
+    border-radius:16px;
+}
+
 .auth-link{
     color:#2563eb;
     text-decoration:none;
@@ -57,127 +62,81 @@
     text-decoration:underline;
 }
 
-.auth-alert{
-    border:none;
-    border-radius:16px;
-}
-
 </style>
 
 <div class="auth-wrapper">
 
     <div class="auth-title">
-
-        Welcome Back 👋
-
+        Set New Password 🔑
     </div>
 
     <div class="auth-subtitle">
-
-        Sign in to Green Studio GST billing portal. Secure role access for Admin and Support teams.
-
+        Please enter your email and choose a secure new password for your account.
     </div>
 
-    @if ($errors->any())
-
-        <div class="alert alert-danger auth-alert mb-4">
-
-            @foreach ($errors->all() as $error)
-
-                <div>{{ $error }}</div>
-
-            @endforeach
-
+    @if (session('status'))
+        <div class="alert alert-success auth-alert mb-4">
+            {{ session('status') }}
         </div>
+    @endif
 
+    @if ($errors->any())
+        <div class="alert alert-danger auth-alert mb-4">
+            @foreach ($errors->all() as $error)
+                <div>{{ $error }}</div>
+            @endforeach
+        </div>
     @endif
 
     <form method="POST"
-          action="{{ route('login') }}"
+          action="{{ route('password.update') }}"
           class="auth-form">
 
         @csrf
 
+        {{-- TOKEN --}}
+        <input type="hidden" name="token" value="{{ $request->route('token') }}">
+
         {{-- EMAIL --}}
         <div class="mb-3">
-
-            <label class="form-label">
-
-                Email Address
-
-            </label>
-
+            <label class="form-label">Email Address</label>
             <input type="email"
-                   id="loginEmail"
                    name="email"
-                   value="{{ old('email') }}"
+                   value="{{ old('email', $request->email) }}"
                    class="form-control @error('email') is-invalid @enderror"
                    placeholder="Enter your email"
                    required
                    autofocus>
-
         </div>
 
-        {{-- PASSWORD --}}
+        {{-- NEW PASSWORD --}}
         <div class="mb-3">
-
-            <label class="form-label">
-
-                Password
-
-            </label>
-
+            <label class="form-label">New Password</label>
             <input type="password"
-                   id="loginPassword"
                    name="password"
                    class="form-control @error('password') is-invalid @enderror"
-                   placeholder="Enter your password"
+                   placeholder="Enter new password (min. 8 characters)"
                    required>
-
         </div>
 
-        {{-- OPTIONS --}}
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-
-            <div class="form-check">
-
-                <input class="form-check-input"
-                       type="checkbox"
-                       name="remember"
-                       id="remember">
-
-                <label class="form-check-label small"
-                       for="remember">
-
-                    Remember me
-
-                </label>
-
-            </div>
-
-            <a href="{{ route('password.request') }}" class="auth-link small">
-                Forgot Password?
-            </a>
-
+        {{-- CONFIRM PASSWORD --}}
+        <div class="mb-4">
+            <label class="form-label">Confirm New Password</label>
+            <input type="password"
+                   name="password_confirmation"
+                   class="form-control"
+                   placeholder="Confirm your new password"
+                   required>
         </div>
 
-        {{-- BUTTON --}}
         <button type="submit"
-                class="btn btn-primary w-100 mb-3 py-3 fw-bold">
-
-            Sign In to Green Studio
-
+                class="btn btn-primary w-100 mb-4">
+            Update Password & Sign In
         </button>
 
-        {{-- CREATE ACCOUNT LINK --}}
-        <div class="text-center mb-3">
-            <span class="small text-muted">Don't have an account?</span>
-            <a href="{{ route('register') }}" class="auth-link small fw-bold ms-1">Create Account</a>
-        </div>
-
-        {{-- SECURITY NOTE --}}
         <div class="text-center small text-muted">
-            🔒 Protected Invoicing Portal • Bihar GSTIN: 10DYFPA2189J1ZO
+            Remember your credentials?
+            <a href="{{ route('login') }}" class="auth-link">Sign In</a>
         </div>
 
     </form>

@@ -39,7 +39,7 @@ class UserController extends Controller
             'name'       => ['required', 'string', 'max:255'],
             'email'      => ['required', 'email', 'max:255', 'unique:users,email'],
             'password'   => ['required', 'string', 'min:6'],
-            'role'       => ['required', 'in:admin,staff'],
+            'role'       => ['required', 'in:admin,support,staff'],
             'company_id' => ['nullable', 'exists:companies,id'],
         ]);
 
@@ -64,7 +64,7 @@ class UserController extends Controller
             'name'       => ['required', 'string', 'max:255'],
             'email'      => ['required', 'email', 'max:255', "unique:users,email,{$user->id}"],
             'password'   => ['nullable', 'string', 'min:6'],
-            'role'       => ['required', 'in:admin,staff'],
+            'role'       => ['required', 'in:admin,support,staff'],
             'company_id' => ['nullable', 'exists:companies,id'],
         ]);
 
@@ -86,5 +86,26 @@ class UserController extends Controller
 
         return redirect()->route('admin.users.index')
             ->with('status', 'User deleted.');
+    }
+
+    public function approve(User $user)
+    {
+        $user->update(['is_approved' => true]);
+
+        return redirect()->route('admin.users.index')
+            ->with('status', "User '{$user->name}' has been approved successfully and can now log in.");
+    }
+
+    public function sendResetLink(User $user)
+    {
+        $status = \Illuminate\Support\Facades\Password::broker()->sendResetLink(['email' => $user->email]);
+
+        if ($status === \Illuminate\Support\Facades\Password::RESET_LINK_SENT) {
+            return redirect()->route('admin.users.index')
+                ->with('status', "Password reset link has been sent to {$user->email}.");
+        }
+
+        return redirect()->route('admin.users.index')
+            ->with('status', 'Password reset dispatch status: ' . __($status));
     }
 }

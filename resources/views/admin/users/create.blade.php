@@ -181,10 +181,10 @@
                             class="form-select"
                             required>
 
-                        <option value="staff"
-                            {{ old('role') === 'staff' ? 'selected' : '' }}>
+                        <option value="support"
+                            {{ old('role') === 'support' ? 'selected' : '' }}>
 
-                            Staff
+                            Support (Staff)
 
                         </option>
 

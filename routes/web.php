@@ -32,7 +32,7 @@ Route::get('/', function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware('auth')->get('/home', function () {
+Route::middleware(['auth', 'approved'])->get('/home', function () {
 
     if (auth()->user()->role === 'admin') {
 
@@ -76,9 +76,19 @@ Route::middleware(['auth', 'admin'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
-    | USERS
+    | USERS (WITH APPROVAL & RESET LINK)
     |--------------------------------------------------------------------------
     */
+
+    Route::post(
+        'admin/users/{user}/approve',
+        [UserController::class, 'approve']
+    )->name('admin.users.approve');
+
+    Route::post(
+        'admin/users/{user}/send-reset-link',
+        [UserController::class, 'sendResetLink']
+    )->name('admin.users.sendResetLink');
 
     Route::resource(
         'admin/users',
@@ -163,7 +173,7 @@ Route::middleware(['auth', 'admin'])->group(function () {
 |--------------------------------------------------------------------------
 */
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth', 'approved'])->group(function () {
 
     /*
     |--------------------------------------------------------------------------
@@ -221,6 +231,11 @@ Route::middleware(['auth'])->group(function () {
         'staff/invoices/{invoice}/status-with-transaction',
         [StaffInvoiceController::class, 'updateStatusWithTransaction']
     )->name('staff.invoices.updateStatusWithTransaction');
+
+    Route::put(
+        'staff/invoices/{invoice}/basic-details',
+        [StaffInvoiceController::class, 'updateBasic']
+    )->name('staff.invoices.updateBasic');
 
     /*
     |--------------------------------------------------------------------------

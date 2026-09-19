@@ -1,4 +1,4 @@
-@extends('layouts.staff')
+@extends(auth()->check() && auth()->user()->role === 'admin' ? 'layouts.admin' : 'layouts.staff')
 
 @section('title', 'Add Customer')
 @section('page_title', 'Add Customer')
