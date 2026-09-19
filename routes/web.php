@@ -161,9 +161,29 @@ Route::middleware(['auth', 'admin'])->group(function () {
     )->name('admin.invoices.show');
 
     Route::get(
-    '/admin/activity-logs',
-    [ActivityLogController::class, 'index']
-)->name('admin.activityLogs.index');
+        '/admin/activity-logs',
+        [ActivityLogController::class, 'index']
+    )->name('admin.activityLogs.index');
+
+    /*
+    |--------------------------------------------------------------------------
+    | EMAIL / SMTP SETTINGS
+    |--------------------------------------------------------------------------
+    */
+    Route::get(
+        '/admin/mail-settings',
+        [\App\Http\Controllers\Admin\MailSettingController::class, 'index']
+    )->name('admin.mailSettings.index');
+
+    Route::post(
+        '/admin/mail-settings',
+        [\App\Http\Controllers\Admin\MailSettingController::class, 'update']
+    )->name('admin.mailSettings.update');
+
+    Route::post(
+        '/admin/mail-settings/test',
+        [\App\Http\Controllers\Admin\MailSettingController::class, 'sendTestEmail']
+    )->name('admin.mailSettings.sendTestEmail');
 
 });
 
@@ -174,6 +194,11 @@ Route::middleware(['auth', 'admin'])->group(function () {
 */
 
 Route::middleware(['auth', 'approved'])->group(function () {
+
+    Route::post(
+        'staff/invoices/{invoice}/send-email',
+        [StaffInvoiceController::class, 'sendEmail']
+    )->name('staff.invoices.sendEmail');
 
     /*
     |--------------------------------------------------------------------------

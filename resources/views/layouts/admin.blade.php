@@ -389,12 +389,20 @@
     </a>
 
     <a href="{{ route('admin.activityLogs.index') }}"
-   class="nav-link @if(request()->routeIs('admin.activityLogs.*')) active @endif">
+       class="nav-link @if(request()->routeIs('admin.activityLogs.*')) active @endif">
 
-    <span>📜</span>
-    <span>Activity Logs</span>
+        <span>📜</span>
+        <span>Activity Logs</span>
 
-</a>
+    </a>
+
+    <a href="{{ route('admin.mailSettings.index') }}"
+       class="nav-link @if(request()->routeIs('admin.mailSettings.*')) active @endif">
+
+        <span>✉️</span>
+        <span>Email Settings</span>
+
+    </a>
 
     {{-- LOGOUT --}}
     <form method="POST"

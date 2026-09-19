@@ -613,4 +613,71 @@ class InvoiceController extends Controller
             ->route('staff.invoices.edit', $invoice)
             ->with('status', 'Invoice basic details updated successfully.');
     }
+
+    /**
+     * Send invoice details directly to customer via configured email.
+     */
+    public function sendEmail(Invoice $invoice)
+    {
+        $invoice->load(['customer', 'items', 'company', 'transaction']);
+        $customer = $invoice->customer;
+
+        if (!$customer || empty($customer->email)) {
+            return back()->with('error', '❌ Customer has no email address. Please update the customer profile with a valid email.');
+        }
+
+        \App\Models\MailSetting::applyConfig();
+
+        $fromName = config('mail.from.name', 'Green Studio');
+        $fromEmail = config('mail.from.address', 'billing@greenstudio.com');
+        $recipient = $customer->email;
+        $customerName = $customer->name ?? 'Valued Customer';
+        $invoiceNumber = $invoice->invoice_number;
+        $totalFormatted = number_format($invoice->total_amount, 2);
+        $invoiceDate = \Carbon\Carbon::parse($invoice->invoice_date)->format('d M Y');
+        $statusText = strtoupper($invoice->status);
+
+        try {
+            \Illuminate\Support\Facades\Mail::html(
+                '<div style="font-family: Arial, sans-serif; max-width: 620px; margin: 0 auto; padding: 28px; border: 1px solid #e2e8f0; border-radius: 16px; background: #ffffff;">'
+                . '<div style="display:flex; justify-content:space-between; align-items:center; border-bottom: 2px solid #16a34a; padding-bottom: 16px; margin-bottom: 24px;">'
+                . '<div><h2 style="color: #16a34a; margin: 0; font-size: 24px; font-weight: 800;">🌿 Green Studio</h2>'
+                . '<p style="margin: 4px 0 0; color: #64748b; font-size: 12px;">GSTIN: 10DYFPA2189J1ZO • Khagaria, Bihar</p></div>'
+                . '<div style="text-align: right;"><span style="background: ' . ($invoice->status === 'paid' ? '#dcfce7' : '#fee2e2') . '; color: ' . ($invoice->status === 'paid' ? '#15803d' : '#b91c1c') . '; font-weight: 800; padding: 6px 14px; border-radius: 999px; font-size: 12px;">' . $statusText . '</span></div>'
+                . '</div>'
+                . '<p style="color: #1e293b; font-size: 15px;">Dear <strong>' . htmlspecialchars($customerName) . '</strong>,</p>'
+                . '<p style="color: #475569; font-size: 14px; line-height: 1.6;">Thank you for your business. Please find below the summary of your GST Tax Invoice:</p>'
+                . '<div style="background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 10px; padding: 18px; margin: 20px 0;">'
+                . '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13.5px;"><span style="color: #64748b;">Invoice Number:</span><strong style="color: #0f172a;">#' . htmlspecialchars($invoiceNumber) . '</strong></div>'
+                . '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13.5px;"><span style="color: #64748b;">Invoice Date:</span><span style="color: #0f172a;">' . $invoiceDate . '</span></div>'
+                . '<div style="display: flex; justify-content: space-between; margin-bottom: 8px; font-size: 13.5px;"><span style="color: #64748b;">Total Amount:</span><strong style="color: #16a34a; font-size: 16px;">₹' . $totalFormatted . '</strong></div>'
+                . '<div style="display: flex; justify-content: space-between; font-size: 13.5px;"><span style="color: #64748b;">Payment Status:</span><span style="font-weight: 700; color: ' . ($invoice->status === 'paid' ? '#16a34a' : '#dc2626') . ';">' . $statusText . '</span></div>'
+                . '</div>'
+                . '<p style="color: #64748b; font-size: 13px; line-height: 1.6;">This is a computer-generated invoice. For any queries, please contact Green Studio Support.</p>'
+                . '<hr style="border: none; border-top: 1px solid #e2e8f0; margin: 24px 0;">'
+                . '<p style="font-size: 11.5px; color: #94a3b8; margin: 0; text-align: center;">Green Studio • Koshi College Road, Chitragupt Nagar, Khagaria - 851205</p>'
+                . '</div>',
+                function ($message) use ($recipient, $fromName, $fromEmail, $invoiceNumber) {
+                    $message->to($recipient)
+                        ->subject("Invoice #{$invoiceNumber} - Green Studio GST Invoicing")
+                        ->from($fromEmail, $fromName);
+                }
+            );
+
+            ActivityLog::create([
+                'user_id'     => auth()->id(),
+                'user_name'   => auth()->user()->name ?? 'User',
+                'user_email'  => auth()->user()->email ?? '',
+                'role'        => auth()->user()->role ?? '',
+                'action'      => 'email_sent',
+                'module'      => 'invoice',
+                'module_id'   => $invoice->id,
+                'description' => "Emailed Invoice #{$invoiceNumber} to customer {$customerName} ({$recipient})",
+            ]);
+
+            return back()->with('status', "✅ Invoice #{$invoiceNumber} sent successfully to {$customerName} ({$recipient})!");
+        } catch (\Throwable $e) {
+            return back()->with('error', "❌ Failed to send email: " . $e->getMessage());
+        }
+    }
 }

@@ -50,11 +50,18 @@ class StaffDashboardController extends Controller
         )
         ->count();
 
+        $recentInvoices = Invoice::with('customer')
+            ->where('created_by', $userId)
+            ->latest('id')
+            ->take(5)
+            ->get();
+
         return view('staff.dashboard', compact(
             'myInvoices',
             'monthlySales',
             'pendingPayments',
-            'paidInvoices'
+            'paidInvoices',
+            'recentInvoices'
         ));
     }
 }

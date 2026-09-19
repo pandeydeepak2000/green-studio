@@ -622,7 +622,21 @@
 <div class="container-fluid py-4 px-lg-4 px-2">
     <div class="invoice-page-container">
 
-        {{-- TOP ACTION CONTROLS (PRINT / DOWNLOAD / EDIT) --}}
+        @if(session('status'))
+            <div class="alert alert-success border-0 shadow-sm rounded-4 mb-3 no-print d-flex align-items-center gap-2">
+                <span>✅</span>
+                <div>{{ session('status') }}</div>
+            </div>
+        @endif
+
+        @if(session('error'))
+            <div class="alert alert-danger border-0 shadow-sm rounded-4 mb-3 no-print d-flex align-items-center gap-2">
+                <span>⚠️</span>
+                <div>{{ session('error') }}</div>
+            </div>
+        @endif
+
+        {{-- TOP ACTION CONTROLS (PRINT / DOWNLOAD / EMAIL / EDIT) --}}
         <div class="invoice-action-bar no-print">
             <div class="d-flex align-items-center gap-2">
                 <span class="badge {{ $invoice->status === 'paid' ? 'bg-success' : 'bg-danger' }} fs-6 px-3 py-2 rounded-pill shadow-sm">
@@ -632,6 +646,13 @@
             </div>
 
             <div class="d-flex align-items-center gap-2 flex-wrap">
+                <form action="{{ route('staff.invoices.sendEmail', $invoice) }}" method="POST" class="d-inline" onsubmit="return confirm('Send Invoice #{{ $invoice->invoice_number }} to customer email ({{ $invoice->customer->email ?? 'No email found' }})?');">
+                    @csrf
+                    <button type="submit" class="btn btn-outline-success action-btn-pill shadow-sm" title="Email invoice directly to customer">
+                        <span>📧</span> Email Invoice
+                    </button>
+                </form>
+
                 <button onclick="window.print()" class="btn btn-primary action-btn-pill shadow-sm">
                     <span>🖨️</span> Print Invoice
                 </button>
