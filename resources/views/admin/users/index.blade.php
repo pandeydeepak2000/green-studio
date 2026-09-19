@@ -172,6 +172,31 @@
 
 </div>
 
+{{-- SEND PASSWORD RESET EMAIL BY EMAIL INPUT --}}
+<div class="card border-0 shadow-sm rounded-4 mb-4" style="background: linear-gradient(to right, #f8fafc, #ffffff); border: 1px solid #e2e8f0 !important;">
+    <div class="card-body p-4">
+        <div class="d-flex align-items-center gap-2 mb-2">
+            <span class="fs-5">🔐</span>
+            <h6 class="fw-bold mb-0 text-dark">Send Password Reset Link by Email (Forgot Password)</h6>
+        </div>
+        <p class="text-muted small mb-3">
+            Yaha kisi bhi user / staff ka email address daalkar <strong>Send Reset Link</strong> dabayein — system unke email par password reset karne ka link bhej dega.
+        </p>
+
+        <form action="{{ route('password.email') }}" method="POST" class="row g-2 align-items-center">
+            @csrf
+            <div class="col-md-6 col-12">
+                <input type="email" name="email" class="form-control rounded-3 py-2" placeholder="Enter user's email address (e.g. staff@greenstudio.com)" required>
+            </div>
+            <div class="col-md-4 col-12">
+                <button type="submit" class="btn btn-primary rounded-3 px-4 py-2 fw-semibold w-100">
+                    ✉️ Send Password Reset Link
+                </button>
+            </div>
+        </form>
+    </div>
+</div>
+
 <div class="card user-card">
 
     <div class="card-body p-0">
