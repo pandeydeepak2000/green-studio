@@ -1,5 +1,28 @@
 <IfModule mod_rewrite.c>
+    Options -Indexes
+
+    # Block access to sensitive system files, .env, .git, artisan
+    <FilesMatch "(^\.|\.env|\.git|composer\.(json|lock)|package(-lock)?\.json|artisan|phpunit\.xml|README\.md)">
+        <IfModule mod_authz_core.c>
+            Require all denied
+        </IfModule>
+        <IfModule !mod_authz_core.c>
+            Order allow,deny
+            Deny from all
+        </IfModule>
+    </FilesMatch>
+
     RewriteEngine On
     RewriteRule ^$ public/ [L]
     RewriteRule (.*) public/$1 [L]
 </IfModule>
+
+# Security Headers
+<IfModule mod_headers.c>
+    Header always set X-Frame-Options "SAMEORIGIN"
+    Header always set X-Content-Type-Options "nosniff"
+    Header always set X-XSS-Protection "1; mode=block"
+    Header always set Referrer-Policy "strict-origin-when-cross-origin"
+</IfModule>
+
+
