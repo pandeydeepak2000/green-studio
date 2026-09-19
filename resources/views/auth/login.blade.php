@@ -1,187 +1,98 @@
 @extends('layouts.auth')
 
-@section('title', 'Sign in - GST Invoice')
+@section('title', 'Sign In - Green Studio GST Portal')
 
 @section('content')
-
-<style>
-
-.auth-title{
-    font-size:28px;
-    font-weight:800;
-    color:#0f172a;
-    margin-bottom:6px;
-}
-
-.auth-subtitle{
-    font-size:14px;
-    color:#64748b;
-    line-height:1.7;
-    margin-bottom:28px;
-}
-
-.auth-form .form-label{
-    font-size:13px;
-    font-weight:700;
-    color:#334155;
-    margin-bottom:8px;
-}
-
-.auth-form .form-control{
-    min-height:52px;
-    border-radius:16px;
-    border:1px solid #dbe2ea;
-    box-shadow:none !important;
-    padding-left:16px;
-}
-
-.auth-form .form-control:focus{
-    border-color:#2563eb;
-    box-shadow:0 0 0 4px rgba(37,99,235,.12) !important;
-}
-
-.auth-form .btn-primary{
-    min-height:52px;
-    border-radius:16px;
-    font-weight:700;
-    font-size:15px;
-}
-
-.auth-link{
-    color:#2563eb;
-    text-decoration:none;
-    font-weight:600;
-}
-
-.auth-link:hover{
-    text-decoration:underline;
-}
-
-.auth-alert{
-    border:none;
-    border-radius:16px;
-}
-
-</style>
 
 <div class="auth-wrapper">
 
     <div class="auth-title">
-
         Welcome Back 👋
-
     </div>
 
     <div class="auth-subtitle">
-
-        Sign in to Green Studio GST billing portal. Secure role access for Admin and Support teams.
-
+        Sign in to Green Studio GST billing portal. Secure role access for Admin & Support teams.
     </div>
 
-    @if ($errors->any())
-
-        <div class="alert alert-danger auth-alert mb-4">
-
-            @foreach ($errors->all() as $error)
-
-                <div>{{ $error }}</div>
-
-            @endforeach
-
+    @if (session('status'))
+        <div class="alert alert-success auth-alert mb-3">
+            {{ session('status') }}
         </div>
-
     @endif
 
-    <form method="POST"
-          action="{{ route('login') }}"
-          class="auth-form">
+    @if ($errors->any())
+        <div class="alert alert-danger auth-alert mb-3">
+            @foreach ($errors->all() as $error)
+                <div>{{ $error }}</div>
+            @endforeach
+        </div>
+    @endif
 
+    <form method="POST" action="{{ route('login') }}" class="auth-form">
         @csrf
 
         {{-- EMAIL --}}
-        <div class="mb-3">
-
-            <label class="form-label">
-
-                Email Address
-
-            </label>
-
+        <div class="mb-2.5 mb-2">
+            <label class="form-label" for="loginEmail">Email Address</label>
             <input type="email"
                    id="loginEmail"
                    name="email"
                    value="{{ old('email') }}"
                    class="form-control @error('email') is-invalid @enderror"
-                   placeholder="Enter your email"
+                   placeholder="name@greenstudio.com"
                    required
                    autofocus>
-
         </div>
 
         {{-- PASSWORD --}}
-        <div class="mb-3">
-
-            <label class="form-label">
-
-                Password
-
-            </label>
-
+        <div class="mb-2.5 mb-2">
+            <label class="form-label" for="loginPassword">Password</label>
             <input type="password"
                    id="loginPassword"
                    name="password"
                    class="form-control @error('password') is-invalid @enderror"
                    placeholder="Enter your password"
                    required>
-
         </div>
 
         {{-- OPTIONS --}}
-        <div class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-2">
-
-            <div class="form-check">
-
+        <div class="d-flex justify-content-between align-items-center mb-3 mt-1 flex-wrap gap-1">
+            <div class="form-check" style="margin-bottom: 0;">
                 <input class="form-check-input"
                        type="checkbox"
                        name="remember"
-                       id="remember">
-
-                <label class="form-check-label small"
-                       for="remember">
-
+                       id="remember"
+                       style="cursor: pointer;">
+                <label class="form-check-label small text-muted"
+                       for="remember"
+                       style="font-size: 12px; cursor: pointer;">
                     Remember me
-
                 </label>
-
             </div>
 
-            <a href="{{ route('password.request') }}" class="auth-link small">
+            <a href="{{ route('password.request') }}" class="auth-link small" style="font-size: 12px;">
                 Forgot Password?
             </a>
-
         </div>
 
         {{-- BUTTON --}}
-        <button type="submit"
-                class="btn btn-primary w-100 mb-3 py-3 fw-bold">
-
+        <button type="submit" class="btn btn-primary w-100 mb-2.5 mb-2 fw-bold">
             Sign In to Green Studio
-
         </button>
 
         {{-- CREATE ACCOUNT LINK --}}
-        <div class="text-center mb-3">
-            <span class="small text-muted">Don't have an account?</span>
-            <a href="{{ route('register') }}" class="auth-link small fw-bold ms-1">Create Account</a>
+        <div class="text-center mb-2" style="font-size: 12px;">
+            <span class="text-muted">Don't have an account?</span>
+            <a href="{{ route('register') }}" class="auth-link ms-1">Create Account</a>
         </div>
 
         {{-- SECURITY NOTE --}}
-        <div class="text-center small text-muted">
-            🔒 Protected Invoicing Portal • Bihar GSTIN: 10DYFPA2189J1ZO
+        <div class="text-center text-muted" style="font-size: 11px; opacity: 0.85;">
+            🔒 Protected Portal • Bihar GSTIN: 10DYFPA2189J1ZO
         </div>
 
     </form>
 
 </div>
 
-@endsection
+@endsection
