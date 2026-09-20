@@ -824,7 +824,7 @@
                         @if($invoice->transactions && $invoice->transactions->count() > 0)
                             @foreach($invoice->transactions as $transaction)
                                 <tr>
-                                    <td class="font-monospace">{{ optional($transaction->paid_at ?? $transaction->created_at)->format('d-m-Y H:i') }}</td>
+                                    <td class="font-monospace fw-semibold">{{ \Carbon\Carbon::parse($transaction->paid_at ?? $invoice->invoice_date)->format('d-m-Y') }}</td>
                                     <td>
                                         <span class="badge-method-pill">
                                             💳 {{ $transaction->gateway ?: 'UPI / Digital Payment' }}
@@ -840,7 +840,7 @@
                             @endforeach
                         @elseif($invoice->status === 'paid')
                             <tr>
-                                <td class="font-monospace">{{ optional($invoice->updated_at)->format('d-m-Y H:i') }}</td>
+                                <td class="font-monospace fw-semibold">{{ \Carbon\Carbon::parse($invoice->invoice_date)->format('d-m-Y') }}</td>
                                 <td>
                                     <span class="badge-method-pill">
                                         💳 UPI / Digital Payment

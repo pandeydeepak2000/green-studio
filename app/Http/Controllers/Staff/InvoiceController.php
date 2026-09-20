@@ -480,33 +480,36 @@ class InvoiceController extends Controller
         $invoice->status = $data['status'];
 
         if (!empty($data['invoice_date'])) {
-
             $invoice->invoice_date = $data['invoice_date'];
-
         }
 
         $invoice->save();
 
         if ($data['status'] === 'paid') {
-
             $method = !empty($data['payment_method']) ? $data['payment_method'] : 'UPI / Digital Payment';
 
-            $invoice->transactions()->create([
+            // Rule: Transaction date strictly matches invoice_date with standard daytime office time (14:30)
+            $transactionDate = Carbon::parse($invoice->invoice_date)->setTime(14, 30, 0);
 
-                'gateway'        => $method,
-
-                'transaction_id' =>
-                    $data['transaction_id'],
-
-                'amount' => $invoice->total_amount,
-
-                'paid_at' => Carbon::now(),
-
-            ]);
+            $existingTx = $invoice->transactions()->first();
+            if ($existingTx) {
+                $existingTx->update([
+                    'gateway'        => $method,
+                    'transaction_id' => $data['transaction_id'],
+                    'amount'         => $invoice->total_amount,
+                    'paid_at'        => $transactionDate,
+                ]);
+            } else {
+                $invoice->transactions()->create([
+                    'gateway'        => $method,
+                    'transaction_id' => $data['transaction_id'],
+                    'amount'         => $invoice->total_amount,
+                    'paid_at'        => $transactionDate,
+                ]);
+            }
 
             // PAYMENT ACTIVITY LOG
             ActivityLog::create([
-
                 'user_id'     => auth()->id(),
                 'user_name'   => auth()->user()->name ?? 'User',
                 'user_email'  => auth()->user()->email ?? '',
@@ -514,9 +517,11 @@ class InvoiceController extends Controller
                 'action'      => 'payment',
                 'module'      => 'invoice',
                 'module_id'   => $invoice->id,
-                'description' => 'Marked invoice #' . $invoice->invoice_number . ' as paid',
-
+                'description' => 'Marked invoice #' . $invoice->invoice_number . ' as paid (Date: ' . $transactionDate->format('d-m-Y') . ')',
             ]);
+        } else {
+            // When marked unpaid, clear any active transactions
+            $invoice->transactions()->delete();
         }
 
         return redirect()
@@ -597,6 +602,15 @@ class InvoiceController extends Controller
             'igst_amount'    => $igstTotal,
             'total_amount'   => $grandTotal,
         ]);
+
+        // Sync existing transaction date with invoice date
+        if ($invoice->transactions()->exists()) {
+            $txDate = Carbon::parse($invoice->invoice_date)->setTime(14, 30, 0);
+            $invoice->transactions()->update([
+                'paid_at' => $txDate,
+                'amount'  => $invoice->total_amount,
+            ]);
+        }
 
         ActivityLog::create([
             'user_id'     => auth()->id(),
