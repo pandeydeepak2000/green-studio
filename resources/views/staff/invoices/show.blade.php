@@ -9,6 +9,11 @@
 <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
 
 <style>
+@page {
+    size: A4 portrait;
+    margin: 0mm !important;
+}
+
 /* ==========================================================================
    ULTRA-PREMIUM EXECUTIVE INVOICE DESIGN
    ========================================================================== */
@@ -559,16 +564,16 @@
 @media print {
     @page {
         size: A4 portrait;
-        margin: 0; /* Suppresses browser URL footer and date/title header in Chrome/Edge */
+        margin: 0mm !important; /* Suppresses browser URL footer and date/title header in Chrome/Edge */
     }
 
     html, body {
         height: auto !important;
         background: #ffffff !important;
         margin: 0 !important;
-        padding: 12mm 15mm 10mm !important; /* Clean paper margins handled by CSS */
+        padding: 14mm 16mm 12mm !important; /* Clean paper margins handled by CSS */
         color: #0f172a !important;
-        font-size: 13.5px !important;
+        font-size: 14px !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
@@ -617,108 +622,108 @@
     }
 
     .sheet-ribbon-box {
-        width: 105px !important;
-        height: 105px !important;
+        width: 110px !important;
+        height: 110px !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
     .sheet-ribbon {
-        font-size: 10.5px !important;
-        line-height: 24px !important;
-        top: 22px !important;
+        font-size: 11px !important;
+        line-height: 26px !important;
+        top: 24px !important;
         left: -5px !important;
-        width: 140px !important;
+        width: 150px !important;
     }
 
     .invoice-header-grid {
-        margin-bottom: 26px !important;
-        gap: 28px !important;
+        margin-bottom: 28px !important;
+        gap: 30px !important;
     }
 
     .green-leaf-emblem {
-        width: 48px !important;
-        height: 48px !important;
-        border-radius: 12px !important;
+        width: 50px !important;
+        height: 50px !important;
+        border-radius: 14px !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
     .green-leaf-emblem svg {
-        width: 28px !important;
-        height: 28px !important;
+        width: 30px !important;
+        height: 30px !important;
     }
 
     .brand-title-text {
-        font-size: 28px !important;
+        font-size: 30px !important;
         font-weight: 900 !important;
-        margin-bottom: 5px !important;
+        margin-bottom: 6px !important;
         line-height: 1.15 !important;
     }
 
     .brand-address-text {
-        font-size: 13px !important;
-        line-height: 1.55 !important;
-        margin-bottom: 5px !important;
+        font-size: 13.5px !important;
+        line-height: 1.6 !important;
+        margin-bottom: 6px !important;
     }
 
     .brand-gstin-badge {
-        font-size: 12.5px !important;
-        padding: 4px 10px !important;
+        font-size: 13px !important;
+        padding: 5px 12px !important;
         border-radius: 8px !important;
         font-weight: 700 !important;
     }
 
     .meta-panel {
-        padding: 12px 18px !important;
-        min-width: 250px !important;
-        border-radius: 12px !important;
+        padding: 14px 20px !important;
+        min-width: 260px !important;
+        border-radius: 14px !important;
     }
 
     .meta-panel-row {
-        padding: 4px 0 !important;
-        font-size: 13px !important;
-    }
-
-    .meta-panel-row .meta-val {
+        padding: 5px 0 !important;
         font-size: 13.5px !important;
     }
 
+    .meta-panel-row .meta-val {
+        font-size: 14.5px !important;
+    }
+
     .recipient-wrapper {
-        margin-bottom: 24px !important;
+        margin-bottom: 26px !important;
         padding-bottom: 0 !important;
     }
 
     .recipient-label {
-        font-size: 11px !important;
+        font-size: 11.5px !important;
         font-weight: 800 !important;
         letter-spacing: 1px !important;
-        margin-bottom: 5px !important;
+        margin-bottom: 6px !important;
     }
 
     .recipient-name {
-        font-size: 19px !important;
+        font-size: 20px !important;
         font-weight: 800 !important;
-        margin-bottom: 5px !important;
+        margin-bottom: 6px !important;
     }
 
     .recipient-detail {
-        font-size: 13px !important;
-        line-height: 1.5 !important;
+        font-size: 13.5px !important;
+        line-height: 1.55 !important;
     }
 
     .recipient-gstin {
-        font-size: 12.5px !important;
-        margin-top: 5px !important;
+        font-size: 13px !important;
+        margin-top: 6px !important;
     }
 
     .items-table-wrapper {
-        margin-bottom: 22px !important;
+        margin-bottom: 26px !important;
     }
 
     .invoice-table thead th {
-        padding: 12px 14px !important;
-        font-size: 12px !important;
+        padding: 13px 16px !important;
+        font-size: 12.5px !important;
         font-weight: 800 !important;
         letter-spacing: 0.8px !important;
         background: #f8fafc !important;
@@ -727,79 +732,79 @@
     }
 
     .invoice-table tbody td {
-        padding: 13px 14px !important;
-        font-size: 13.5px !important;
-        line-height: 1.4 !important;
+        padding: 15px 16px !important;
+        font-size: 14px !important;
+        line-height: 1.45 !important;
     }
 
     .invoice-table .col-desc {
-        font-size: 14px !important;
+        font-size: 14.5px !important;
         font-weight: 700 !important;
     }
 
     .summary-container {
-        margin-bottom: 22px !important;
+        margin-bottom: 26px !important;
     }
 
     .summary-card {
-        width: 350px !important;
+        width: 360px !important;
     }
 
     .summary-line {
-        padding: 5px 0 !important;
-        font-size: 13px !important;
+        padding: 6px 0 !important;
+        font-size: 13.5px !important;
     }
 
     .summary-divider {
-        margin: 6px 0 8px !important;
+        margin: 7px 0 9px !important;
     }
 
     .grand-total-row {
-        font-size: 17px !important;
+        font-size: 18px !important;
     }
 
     .grand-total-row .gt-val {
-        font-size: 20px !important;
+        font-size: 22px !important;
         font-weight: 900 !important;
     }
 
     .transaction-section {
-        margin-top: 22px !important;
-        margin-bottom: 16px !important;
+        margin-top: 26px !important;
+        margin-bottom: 18px !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
     }
 
     .transaction-section-title {
-        font-size: 13.5px !important;
+        font-size: 14px !important;
         font-weight: 800 !important;
-        margin-bottom: 8px !important;
+        margin-bottom: 9px !important;
     }
 
     .transaction-table thead th {
-        padding: 8px 12px !important;
-        font-size: 11px !important;
+        padding: 9px 14px !important;
+        font-size: 11.5px !important;
         font-weight: 800 !important;
     }
 
     .transaction-table tbody td {
-        padding: 10px 12px !important;
-        font-size: 12.5px !important;
+        padding: 12px 14px !important;
+        font-size: 13px !important;
     }
 
     .badge-method-pill {
-        font-size: 11.5px !important;
-        padding: 3px 10px !important;
+        font-size: 12px !important;
+        padding: 4px 12px !important;
     }
 
     .badge-status-completed {
-        font-size: 11.5px !important;
+        font-size: 12px !important;
     }
 
     .computer-generated-footer {
-        margin-top: 26px !important;
-        padding-top: 14px !important;
-        font-size: 12px !important;
+        margin-top: 30px !important;
+        padding-top: 16px !important;
+        font-size: 12.5px !important;
         border-top: 1px solid #e2e8f0 !important;
         page-break-after: avoid !important;
         break-after: avoid !important;
@@ -858,6 +863,12 @@
                 <a href="{{ auth()->check() && auth()->user()->role === 'admin' ? route('admin.invoices.index') : route('staff.invoices.index') }}" class="btn btn-light border action-btn-pill text-secondary">
                     <span>⬅️</span> Back
                 </a>
+            </div>
+        </div>
+
+        <div class="alert alert-light border py-2 px-3 rounded-4 mb-3 no-print d-flex align-items-center justify-content-between flex-wrap gap-2 small shadow-sm text-secondary">
+            <div>
+                💡 <strong>Clean Print Tip:</strong> Print window me <strong>"More settings"</strong> par click karke <strong>"Headers and footers"</strong> ko <u>untick</u> kar dein, taaki upar ki date aur niche ka website URL print na ho.
             </div>
         </div>
 
