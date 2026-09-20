@@ -868,7 +868,7 @@
 
         <div class="alert alert-light border py-2 px-3 rounded-4 mb-3 no-print d-flex align-items-center justify-content-between flex-wrap gap-2 small shadow-sm text-secondary">
             <div>
-                💡 <strong>Clean Print Tip:</strong> Print window me <strong>"More settings"</strong> par click karke <strong>"Headers and footers"</strong> ko <u>untick</u> kar dein, taaki upar ki date aur niche ka website URL print na ho.
+                💡 <strong>Clean Print Tip:</strong> In the print preview window, click <strong>"More settings"</strong> and uncheck <strong>"Headers and footers"</strong> to remove the date and website URL from the printed invoice.
             </div>
         </div>
 
