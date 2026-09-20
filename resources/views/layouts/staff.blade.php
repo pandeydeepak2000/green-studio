@@ -40,7 +40,7 @@
 
         body{
             margin:0;
-            font-family:'Inter',sans-serif;
+            font-family:'Inter',system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Helvetica Neue",Arial,sans-serif;
             background:var(--body-bg);
             overflow-x:hidden;
         }

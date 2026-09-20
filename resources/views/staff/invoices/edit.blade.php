@@ -135,6 +135,73 @@ textarea.form-control{
     border-radius:999px;
 }
 
+/* SCOPED COMPACT PROFESSIONAL ITEMS TABLE */
+.items-table{
+    border-collapse:separate;
+    border-spacing:0;
+}
+
+.items-table th{
+    background:#f1f5f9 !important;
+    font-size:12px;
+    font-weight:800;
+    text-transform:uppercase;
+    letter-spacing:.6px;
+    color:#475569;
+    padding:10px 12px !important;
+    border-bottom:2px solid #cbd5e1 !important;
+}
+
+.items-table td{
+    padding:8px 10px !important;
+    vertical-align:middle !important;
+    border-bottom:1px solid #f1f5f9 !important;
+}
+
+.items-table .form-control{
+    min-height:38px !important;
+    height:38px !important;
+    font-size:13.5px !important;
+    border-radius:8px !important;
+    border:1px solid #cbd5e1 !important;
+    padding:6px 12px !important;
+}
+
+.items-table .form-control:focus{
+    border-color:#16a34a !important;
+    box-shadow:0 0 0 3px rgba(22,163,74,.15) !important;
+}
+
+.items-table .input-group-text{
+    background:#f8fafc;
+    border-color:#cbd5e1;
+    font-size:13px;
+    font-weight:700;
+    color:#64748b;
+    border-radius:8px;
+    padding:6px 10px;
+}
+
+.item-index-badge{
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    width:24px;
+    height:24px;
+    border-radius:6px;
+    background:#e2e8f0;
+    color:#334155;
+    font-weight:800;
+    font-size:12px;
+}
+
+.items-summary-bar{
+    background:linear-gradient(to right, #f8fafc, #f1f5f9);
+    border:1px solid #e2e8f0;
+    border-radius:16px;
+    padding:14px 20px;
+}
+
 @media(max-width:768px){
 
     .invoice-card{
@@ -471,32 +538,18 @@ textarea.form-control{
 
                     <div class="table-responsive">
 
-                        <table class="table align-middle border">
+                        <table class="table align-middle border mb-0 items-table">
 
                             <thead>
 
                                 <tr>
 
-                                    <th style="width:55%">
-                                        Description
-                                    </th>
-
-                                    <th style="width:15%">
-                                        Rate
-                                    </th>
-
-                                    <th style="width:15%">
-                                        GST %
-                                    </th>
-
-                                    <th style="width:10%"
-                                        class="text-end">
-
-                                        Total
-
-                                    </th>
-
-                                    <th style="width:5%"></th>
+                                    <th style="width:40px" class="text-center">#</th>
+                                    <th style="width:48%">Item Description</th>
+                                    <th style="width:16%" class="text-end">Rate (₹)</th>
+                                    <th style="width:14%" class="text-center">GST %</th>
+                                    <th style="width:16%" class="text-end">Amount (₹)</th>
+                                    <th style="width:50px" class="text-center"></th>
 
                                 </tr>
 
@@ -508,62 +561,60 @@ textarea.form-control{
 
                                     <tr>
 
+                                        {{-- S.NO --}}
+                                        <td class="text-center">
+                                            <span class="item-index-badge row-index">{{ $loop->iteration }}</span>
+                                        </td>
+
                                         {{-- DESCRIPTION --}}
                                         <td>
-
-                                            <textarea
-                                                name="items[{{ $index }}][description]"
-                                                class="form-control"
-                                                rows="2"
-                                                required>{{ $item->description }}</textarea>
-
+                                            <input type="text"
+                                                   name="items[{{ $index }}][description]"
+                                                   class="form-control item-desc"
+                                                   placeholder="Enter item description or service details..."
+                                                   value="{{ $item->description }}"
+                                                   required>
                                         </td>
 
                                         {{-- RATE --}}
                                         <td>
-
-                                            <input type="number"
-                                                   step="0.01"
-                                                   min="0"
-                                                   name="items[{{ $index }}][rate]"
-                                                   class="form-control rate"
-                                                   value="{{ $item->rate }}">
-
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text">₹</span>
+                                                <input type="number"
+                                                       step="0.01"
+                                                       min="0"
+                                                       name="items[{{ $index }}][rate]"
+                                                       class="form-control rate text-end"
+                                                       placeholder="0.00"
+                                                       value="{{ $item->rate }}">
+                                            </div>
                                         </td>
 
                                         {{-- GST --}}
                                         <td>
-
-                                            <input type="number"
-                                                   step="0.01"
-                                                   min="0"
-                                                   name="items[{{ $index }}][gst_percent]"
-                                                   class="form-control gst-percent"
-                                                   value="{{ $item->gst_percent }}">
-
+                                            <div class="input-group input-group-sm">
+                                                <input type="number"
+                                                       step="0.01"
+                                                       min="0"
+                                                       name="items[{{ $index }}][gst_percent]"
+                                                       class="form-control gst-percent text-center"
+                                                       value="{{ $item->gst_percent }}">
+                                                <span class="input-group-text">%</span>
+                                            </div>
                                         </td>
 
                                         {{-- TOTAL --}}
                                         <td class="text-end">
-
-                                            ₹<span class="line-total line-total-text">
-
-                                                {{ number_format($item->line_total, 2) }}
-
-                                            </span>
-
+                                            <span class="fw-bold text-dark fs-6">₹<span class="line-total line-total-text">{{ number_format($item->line_total, 2) }}</span></span>
                                         </td>
 
                                         {{-- REMOVE --}}
-                                        <td class="text-end">
-
+                                        <td class="text-center">
                                             <button type="button"
-                                                    class="btn btn-outline-danger remove-row">
-
-                                                ×
-
+                                                    class="btn btn-sm btn-outline-danger p-1 px-2 remove-row rounded-3"
+                                                    title="Delete Row">
+                                                🗑️
                                             </button>
-
                                         </td>
 
                                     </tr>
@@ -572,56 +623,52 @@ textarea.form-control{
 
                                     <tr>
 
-                                        <td>
-
-                                            <textarea
-                                                name="items[0][description]"
-                                                class="form-control"
-                                                rows="2"
-                                                required></textarea>
-
+                                        <td class="text-center">
+                                            <span class="item-index-badge row-index">1</span>
                                         </td>
 
                                         <td>
-
-                                            <input type="number"
-                                                   step="0.01"
-                                                   min="0"
-                                                   name="items[0][rate]"
-                                                   class="form-control rate">
-
+                                            <input type="text"
+                                                   name="items[0][description]"
+                                                   class="form-control item-desc"
+                                                   placeholder="Enter item description or service details..."
+                                                   required>
                                         </td>
 
                                         <td>
+                                            <div class="input-group input-group-sm">
+                                                <span class="input-group-text">₹</span>
+                                                <input type="number"
+                                                       step="0.01"
+                                                       min="0"
+                                                       name="items[0][rate]"
+                                                       class="form-control rate text-end"
+                                                       placeholder="0.00">
+                                            </div>
+                                        </td>
 
-                                            <input type="number"
-                                                   step="0.01"
-                                                   min="0"
-                                                   name="items[0][gst_percent]"
-                                                   class="form-control gst-percent"
-                                                   value="18">
-
+                                        <td>
+                                            <div class="input-group input-group-sm">
+                                                <input type="number"
+                                                       step="0.01"
+                                                       min="0"
+                                                       name="items[0][gst_percent]"
+                                                       class="form-control gst-percent text-center"
+                                                       value="18">
+                                                <span class="input-group-text">%</span>
+                                            </div>
                                         </td>
 
                                         <td class="text-end">
-
-                                            ₹<span class="line-total line-total-text">
-
-                                                0.00
-
-                                            </span>
-
+                                            <span class="fw-bold text-dark fs-6">₹<span class="line-total line-total-text">0.00</span></span>
                                         </td>
 
-                                        <td class="text-end">
-
+                                        <td class="text-center">
                                             <button type="button"
-                                                    class="btn btn-outline-danger remove-row">
-
-                                                ×
-
+                                                    class="btn btn-sm btn-outline-danger p-1 px-2 remove-row rounded-3"
+                                                    title="Delete Row">
+                                                🗑️
                                             </button>
-
                                         </td>
 
                                     </tr>
@@ -630,28 +677,53 @@ textarea.form-control{
 
                             </tbody>
 
+                            <tfoot>
+                                <tr>
+                                    <td colspan="6" class="p-2 px-3 bg-light border-top">
+                                        <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+                                            <button type="button"
+                                                    class="btn btn-sm btn-success fw-bold px-3 py-2 d-inline-flex align-items-center gap-2 rounded-3 shadow-sm"
+                                                    id="add-row">
+                                                <span class="fs-5 lh-1">+</span> <span>Add Another Item</span>
+                                            </button>
+                                            <span class="text-muted small">
+                                                💡 <strong>Shortcut:</strong> Press <kbd class="bg-secondary text-white px-1 py-0 rounded">Enter</kbd> in GST % to add next line automatically.
+                                            </span>
+                                        </div>
+                                    </td>
+                                </tr>
+                            </tfoot>
+
                         </table>
 
                     </div>
 
-                    {{-- ACTIONS --}}
-                    <div class="d-flex justify-content-between align-items-center flex-wrap gap-3 mt-4">
-
-                        <button type="button"
-                                class="btn btn-outline-secondary"
-                                id="add-row">
-
-                            + Add Item
-
-                        </button>
-
-                        <button type="submit"
-                                class="btn btn-primary">
-
-                            Save Items
-
-                        </button>
-
+                    {{-- LIVE SUMMARY & SAVE --}}
+                    <div class="items-summary-bar mt-3 d-flex justify-content-between align-items-center flex-wrap gap-3">
+                        <div class="d-flex align-items-center gap-4 flex-wrap">
+                            <div>
+                                <div class="small text-muted fw-semibold">Taxable Subtotal</div>
+                                <div class="fw-bold text-dark fs-6">₹<span id="summary-subtotal">0.00</span></div>
+                            </div>
+                            <div>
+                                <div class="small text-muted fw-semibold">Estimated GST</div>
+                                <div class="fw-bold text-dark fs-6">₹<span id="summary-gst">0.00</span></div>
+                            </div>
+                            <div>
+                                <div class="small text-muted fw-semibold">Total Items</div>
+                                <div class="fw-bold text-secondary fs-6"><span id="summary-count">0</span> lines</div>
+                            </div>
+                        </div>
+                        <div class="d-flex align-items-center gap-3">
+                            <div class="text-end pe-3 border-end">
+                                <div class="small text-muted fw-semibold">Total Amount</div>
+                                <div class="fw-bold text-success fs-5">₹<span id="summary-total">0.00</span></div>
+                            </div>
+                            <button type="submit"
+                                    class="btn btn-primary px-4 py-2 fw-bold rounded-3 shadow-sm d-inline-flex align-items-center gap-2">
+                                <span>💾</span> <span>Save Items</span>
+                            </button>
+                        </div>
                     </div>
 
                 </form>
@@ -673,153 +745,149 @@ textarea.form-control{
 document.addEventListener('DOMContentLoaded', function () {
 
     const tbody = document.getElementById('items-body');
-
     const addBtn = document.getElementById('add-row');
 
+    function updateRowIndices() {
+        Array.from(tbody.querySelectorAll('tr')).forEach(function (row, idx) {
+            const badge = row.querySelector('.row-index');
+            if (badge) badge.textContent = idx + 1;
+        });
+        const countSpan = document.getElementById('summary-count');
+        if (countSpan) countSpan.textContent = tbody.rows.length;
+    }
+
     function recalc() {
+        let grandTaxable = 0;
+        let grandGst = 0;
+        let grandTotal = 0;
 
         Array.from(tbody.rows).forEach(function (row) {
-
-            const rate = parseFloat(
-                row.querySelector('.rate')?.value || 0
-            );
-
-            const gstP = parseFloat(
-                row.querySelector('.gst-percent')?.value || 0
-            );
+            const rate = parseFloat(row.querySelector('.rate')?.value || 0);
+            const gstP = parseFloat(row.querySelector('.gst-percent')?.value || 0);
 
             const taxable = rate;
-
             const gstAmt = taxable * (gstP / 100);
-
             const total = taxable + gstAmt;
 
+            grandTaxable += taxable;
+            grandGst += gstAmt;
+            grandTotal += total;
+
             const span = row.querySelector('.line-total');
-
             if (span) {
-
                 span.textContent = total.toFixed(2);
-
             }
-
         });
 
+        const subtotalSpan = document.getElementById('summary-subtotal');
+        const gstSpan = document.getElementById('summary-gst');
+        const totalSpan = document.getElementById('summary-total');
+
+        if (subtotalSpan) subtotalSpan.textContent = grandTaxable.toFixed(2);
+        if (gstSpan) gstSpan.textContent = grandGst.toFixed(2);
+        if (totalSpan) totalSpan.textContent = grandTotal.toFixed(2);
+
+        updateRowIndices();
     }
 
     function attachRowEvents(row) {
-
         ['rate', 'gst-percent'].forEach(function (cls) {
-
             const input = row.querySelector('.' + cls);
-
             if (input) {
-
                 input.addEventListener('input', recalc);
-
             }
-
         });
 
-        const removeBtn = row.querySelector('.remove-row');
-
-        if (removeBtn) {
-
-            removeBtn.addEventListener('click', function () {
-
-                if (tbody.rows.length > 1) {
-
-                    row.remove();
-
-                    recalc();
-
+        const gstInput = row.querySelector('.gst-percent');
+        if (gstInput) {
+            gstInput.addEventListener('keydown', function(e) {
+                if (e.key === 'Enter') {
+                    e.preventDefault();
+                    if (addBtn) addBtn.click();
                 }
-
             });
-
         }
 
+        const removeBtn = row.querySelector('.remove-row');
+        if (removeBtn) {
+            removeBtn.addEventListener('click', function () {
+                if (tbody.rows.length > 1) {
+                    row.remove();
+                    recalc();
+                } else {
+                    const desc = row.querySelector('.item-desc');
+                    const rate = row.querySelector('.rate');
+                    const gst = row.querySelector('.gst-percent');
+                    if (desc) desc.value = '';
+                    if (rate) rate.value = '';
+                    if (gst) gst.value = '18';
+                    recalc();
+                }
+            });
+        }
     }
 
     Array.from(tbody.rows).forEach(attachRowEvents);
-
     recalc();
 
     if (addBtn) {
-
         addBtn.addEventListener('click', function () {
-
             const index = tbody.rows.length;
-
             const tpl = `
-
                 <tr>
-
-                    <td>
-
-                        <textarea
-                            name="items[${index}][description]"
-                            class="form-control"
-                            rows="2"
-                            required></textarea>
-
+                    <td class="text-center">
+                        <span class="item-index-badge row-index">${index + 1}</span>
                     </td>
-
                     <td>
-
-                        <input type="number"
-                               step="0.01"
-                               min="0"
-                               name="items[${index}][rate]"
-                               class="form-control rate">
-
+                        <input type="text"
+                               name="items[${index}][description]"
+                               class="form-control item-desc"
+                               placeholder="Enter item description or service details..."
+                               required>
                     </td>
-
                     <td>
-
-                        <input type="number"
-                               step="0.01"
-                               min="0"
-                               name="items[${index}][gst_percent]"
-                               class="form-control gst-percent"
-                               value="18">
-
+                        <div class="input-group input-group-sm">
+                            <span class="input-group-text">₹</span>
+                            <input type="number"
+                                   step="0.01"
+                                   min="0"
+                                   name="items[${index}][rate]"
+                                   class="form-control rate text-end"
+                                   placeholder="0.00">
+                        </div>
                     </td>
-
+                    <td>
+                        <div class="input-group input-group-sm">
+                            <input type="number"
+                                   step="0.01"
+                                   min="0"
+                                   name="items[${index}][gst_percent]"
+                                   class="form-control gst-percent text-center"
+                                   value="18">
+                            <span class="input-group-text">%</span>
+                        </div>
+                    </td>
                     <td class="text-end">
-
-                        ₹<span class="line-total line-total-text">
-
-                            0.00
-
-                        </span>
-
+                        <span class="fw-bold text-dark fs-6">₹<span class="line-total line-total-text">0.00</span></span>
                     </td>
-
-                    <td class="text-end">
-
+                    <td class="text-center">
                         <button type="button"
-                                class="btn btn-outline-danger remove-row">
-
-                            ×
-
+                                class="btn btn-sm btn-outline-danger p-1 px-2 remove-row rounded-3"
+                                title="Delete Row">
+                            🗑️
                         </button>
-
                     </td>
-
                 </tr>
-
             `;
 
             tbody.insertAdjacentHTML('beforeend', tpl);
-
             const newRow = tbody.rows[tbody.rows.length - 1];
-
             attachRowEvents(newRow);
-
             recalc();
 
+            const newDesc = newRow.querySelector('.item-desc');
+            if (newDesc) newDesc.focus();
         });
-
     }
 
 });
