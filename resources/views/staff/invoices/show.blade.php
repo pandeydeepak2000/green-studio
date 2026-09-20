@@ -559,7 +559,7 @@
 @media print {
     @page {
         size: A4 portrait;
-        margin: 5mm 8mm;
+        margin: 10mm 12mm;
     }
 
     html, body {
@@ -567,8 +567,8 @@
         background: #ffffff !important;
         margin: 0 !important;
         padding: 0 !important;
-        color: #000000 !important;
-        font-size: 11.5px !important;
+        color: #0f172a !important;
+        font-size: 12.5px !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
@@ -607,7 +607,7 @@
     .invoice-sheet {
         border: none !important;
         box-shadow: none !important;
-        padding: 0 !important;
+        padding: 6px 10px !important;
         margin: 0 !important;
         border-radius: 0 !important;
         page-break-inside: avoid !important;
@@ -617,168 +617,180 @@
     }
 
     .sheet-ribbon-box {
-        width: 75px !important;
-        height: 75px !important;
+        width: 95px !important;
+        height: 95px !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
     .sheet-ribbon {
-        font-size: 8px !important;
-        line-height: 18px !important;
-        top: 15px !important;
-        left: -6px !important;
-        width: 105px !important;
+        font-size: 9.5px !important;
+        line-height: 22px !important;
+        top: 20px !important;
+        left: -5px !important;
+        width: 130px !important;
     }
 
     .invoice-header-grid {
-        margin-bottom: 8px !important;
-        gap: 14px !important;
+        margin-bottom: 20px !important;
+        gap: 24px !important;
     }
 
     .green-leaf-emblem {
-        width: 32px !important;
-        height: 32px !important;
-        border-radius: 7px !important;
+        width: 42px !important;
+        height: 42px !important;
+        border-radius: 10px !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
     .green-leaf-emblem svg {
-        width: 18px !important;
-        height: 18px !important;
+        width: 24px !important;
+        height: 24px !important;
     }
 
     .brand-title-text {
-        font-size: 18px !important;
-        margin-bottom: 2px !important;
+        font-size: 24px !important;
+        font-weight: 900 !important;
+        margin-bottom: 4px !important;
+        line-height: 1.15 !important;
     }
 
     .brand-address-text {
-        font-size: 10px !important;
-        line-height: 1.3 !important;
-        margin-bottom: 2px !important;
+        font-size: 12px !important;
+        line-height: 1.45 !important;
+        margin-bottom: 4px !important;
     }
 
     .brand-gstin-badge {
-        font-size: 10px !important;
-        padding: 1.5px 6px !important;
-    }
-
-    .meta-panel {
-        padding: 6px 12px !important;
-        min-width: 200px !important;
+        font-size: 11.5px !important;
+        padding: 3px 8px !important;
         border-radius: 6px !important;
     }
 
+    .meta-panel {
+        padding: 10px 16px !important;
+        min-width: 230px !important;
+        border-radius: 10px !important;
+    }
+
     .meta-panel-row {
-        padding: 1px 0 !important;
-        font-size: 10.5px !important;
+        padding: 3px 0 !important;
+        font-size: 12px !important;
     }
 
     .recipient-wrapper {
-        margin-bottom: 8px !important;
+        margin-bottom: 20px !important;
         padding-bottom: 0 !important;
     }
 
     .recipient-label {
-        font-size: 9px !important;
-        margin-bottom: 2px !important;
+        font-size: 10.5px !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.8px !important;
+        margin-bottom: 4px !important;
     }
 
     .recipient-name {
-        font-size: 13.5px !important;
-        margin-bottom: 2px !important;
+        font-size: 17px !important;
+        font-weight: 800 !important;
+        margin-bottom: 4px !important;
     }
 
     .recipient-detail {
-        font-size: 10.5px !important;
-        line-height: 1.3 !important;
+        font-size: 12px !important;
+        line-height: 1.45 !important;
     }
 
     .recipient-gstin {
-        font-size: 10px !important;
-        margin-top: 2px !important;
+        font-size: 11.5px !important;
+        margin-top: 4px !important;
     }
 
     .items-table-wrapper {
-        margin-bottom: 8px !important;
+        margin-bottom: 18px !important;
     }
 
     .invoice-table thead th {
-        padding: 4px 8px !important;
-        font-size: 9.5px !important;
+        padding: 9px 12px !important;
+        font-size: 11px !important;
+        font-weight: 800 !important;
+        letter-spacing: 0.6px !important;
         background: #f8fafc !important;
         -webkit-print-color-adjust: exact !important;
         print-color-adjust: exact !important;
     }
 
     .invoice-table tbody td {
-        padding: 4px 8px !important;
-        font-size: 10.5px !important;
-        line-height: 1.25 !important;
+        padding: 10px 12px !important;
+        font-size: 12.5px !important;
+        line-height: 1.35 !important;
     }
 
     .summary-container {
-        margin-bottom: 6px !important;
+        margin-bottom: 18px !important;
     }
 
     .summary-card {
-        width: 250px !important;
+        width: 320px !important;
     }
 
     .summary-line {
-        padding: 1px 0 !important;
-        font-size: 10px !important;
+        padding: 3px 0 !important;
+        font-size: 12px !important;
     }
 
     .summary-divider {
-        margin: 3px 0 5px !important;
+        margin: 6px 0 8px !important;
     }
 
     .grand-total-row {
-        font-size: 13px !important;
+        font-size: 16px !important;
     }
 
     .grand-total-row .gt-val {
-        font-size: 14px !important;
+        font-size: 18px !important;
+        font-weight: 900 !important;
     }
 
     .transaction-section {
-        margin-top: 6px !important;
-        margin-bottom: 4px !important;
+        margin-top: 18px !important;
+        margin-bottom: 12px !important;
         page-break-inside: avoid !important;
         break-inside: avoid !important;
     }
 
     .transaction-section-title {
-        font-size: 10px !important;
-        margin-bottom: 2px !important;
+        font-size: 12.5px !important;
+        font-weight: 800 !important;
+        margin-bottom: 6px !important;
     }
 
     .transaction-table thead th {
-        padding: 3px 6px !important;
-        font-size: 9px !important;
+        padding: 6px 10px !important;
+        font-size: 10.5px !important;
+        font-weight: 800 !important;
     }
 
     .transaction-table tbody td {
-        padding: 3px 6px !important;
-        font-size: 9.5px !important;
+        padding: 8px 10px !important;
+        font-size: 11.5px !important;
     }
 
     .badge-method-pill {
-        font-size: 9px !important;
-        padding: 1px 5px !important;
+        font-size: 11px !important;
+        padding: 3px 8px !important;
     }
 
     .badge-status-completed {
-        font-size: 9px !important;
+        font-size: 11px !important;
     }
 
     .computer-generated-footer {
-        margin-top: 8px !important;
-        padding-top: 5px !important;
-        font-size: 9px !important;
+        margin-top: 20px !important;
+        padding-top: 12px !important;
+        font-size: 11px !important;
+        border-top: 1px solid #e2e8f0 !important;
         page-break-after: avoid !important;
         break-after: avoid !important;
     }
