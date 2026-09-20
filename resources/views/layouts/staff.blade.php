@@ -470,6 +470,15 @@
 
     overlay.addEventListener('click', closeSidebar);
 
+    // Session & Connection Keep-Alive: keeps worker & session warm every 2 minutes
+    setInterval(function() {
+        if (navigator.onLine) {
+            fetch("{{ route('ping') }}", {
+                headers: { 'X-Requested-With': 'XMLHttpRequest' }
+            }).catch(function() {});
+        }
+    }, 120000);
+
 </script>
 
 @yield('scripts')
