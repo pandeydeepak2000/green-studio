@@ -425,6 +425,13 @@ class InvoiceController extends Controller
 
         ]);
 
+        // Keep transaction amount in sync with invoice total
+        if ($invoice->transactions()->exists()) {
+            $invoice->transactions()->update([
+                'amount' => $grandTotal,
+            ]);
+        }
+
         // ACTIVITY LOG
         ActivityLog::create([
 
@@ -491,19 +498,22 @@ class InvoiceController extends Controller
             // Rule: Transaction date strictly matches invoice_date with standard daytime office time (14:30)
             $transactionDate = Carbon::parse($invoice->invoice_date)->setTime(14, 30, 0);
 
+            // Ensure amount is never zero if invoice has items or total
+            $txAmount = ($invoice->total_amount > 0) ? $invoice->total_amount : (float) $invoice->items()->sum('line_total');
+
             $existingTx = $invoice->transactions()->first();
             if ($existingTx) {
                 $existingTx->update([
                     'gateway'        => $method,
                     'transaction_id' => $data['transaction_id'],
-                    'amount'         => $invoice->total_amount,
+                    'amount'         => $txAmount,
                     'paid_at'        => $transactionDate,
                 ]);
             } else {
                 $invoice->transactions()->create([
                     'gateway'        => $method,
                     'transaction_id' => $data['transaction_id'],
-                    'amount'         => $invoice->total_amount,
+                    'amount'         => $txAmount,
                     'paid_at'        => $transactionDate,
                 ]);
             }

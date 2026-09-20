@@ -1036,7 +1036,7 @@
                                             ✓ Paid & Verified
                                         </span>
                                     </td>
-                                    <td style="text-align: right;" class="font-monospace fw-bold">₹{{ number_format($transaction->amount, 2) }}</td>
+                                    <td style="text-align: right;" class="font-monospace fw-bold">₹{{ number_format(($transaction->amount > 0 ? $transaction->amount : $invoice->total_amount), 2) }}</td>
                                 </tr>
                             @endforeach
                         @elseif($invoice->status === 'paid')
